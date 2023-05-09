@@ -9,6 +9,7 @@
     "strict": true,
     "skipLibCheck": true,
     "paths": {
+      "@/entities/*": ["./src/domain/entities/*"],
       "@/controller/*": ["./src/infra/controller/*"],
       "@/http/*": ["./src/infra/http/*"],
       "@/*": ["./src/*"]

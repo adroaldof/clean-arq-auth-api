@@ -15,6 +15,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '@/entities': path.resolve(__dirname, './src/domain/entities'),
       '@/controller': path.resolve(__dirname, './src/infra/controller'),
       '@/http': path.resolve(__dirname, './src/infra/http'),
       '@/': path.resolve(__dirname, './src'),
