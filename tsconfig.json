@@ -9,6 +9,8 @@
     "strict": true,
     "skipLibCheck": true,
     "paths": {
+      "@/ports/*": ["./src/application/ports/*"],
+      "@/use-cases/*": ["./src/application/use-cases/*"],
       "@/entities/*": ["./src/domain/entities/*"],
       "@/controller/*": ["./src/infra/controller/*"],
       "@/http/*": ["./src/infra/http/*"],

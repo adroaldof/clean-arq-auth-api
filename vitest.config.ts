@@ -15,6 +15,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '@/ports': path.resolve(__dirname, './src/application/ports'),
+      '@/use-cases': path.resolve(__dirname, './src/application/use-cases'),
       '@/entities': path.resolve(__dirname, './src/domain/entities'),
       '@/controller': path.resolve(__dirname, './src/infra/controller'),
       '@/http': path.resolve(__dirname, './src/infra/http'),
