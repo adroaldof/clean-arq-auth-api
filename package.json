@@ -1,0 +1,17 @@
+{
+  "name": "clean-arq-auth-api",
+  "description": "Clean Architecture API with JWT Authentication project",
+  "version": "1.0.0",
+  "author": "Adroaldo de Andrade <adroaldof@gmail.com>",
+  "license": "ISC",
+  "main": "index.ts",
+  "scripts": {
+    "lint": "eslint --ext .ts src/ --fix"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "5.49.0",
+    "@typescript-eslint/parser": "5.49.0",
+    "eslint": "8.33.0",
+    "typescript": "4.9.4"
+  }
+}
