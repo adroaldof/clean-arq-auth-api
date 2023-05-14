@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: auth_test_api
+    image: node:19.5.0-alpine
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 5000:5000
+    environment:
+      NODE_ENV: test
+      POSTGRES_HOST: db
+      POSTGRES_DATABASE: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    depends_on:
+      - db
+
+  db:
+    container_name: auth_test_db
+    image: postgres:15.1-alpine
+    ports:
+      - 5432:5432
+    command: postgres -D /run/pgsql-15.1-data -F
+    environment:
+      LOGGING_COLLECTOR: on
+      DOCKER_DRIVER: overlay
+      PGDATA: /run/pgsql-15.1-data
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    logging:
+      driver: none
