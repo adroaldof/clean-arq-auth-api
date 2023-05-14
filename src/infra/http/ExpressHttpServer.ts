@@ -1,7 +1,7 @@
-import cors from 'cors'
-import express, { Request, Response } from 'express'
-import { CallbackFunction, HttpServer } from './HttpServer'
-import { StatusCodes } from 'http-status-codes'
+import cors from 'cors';
+import express, { Request, Response } from 'express';
+import { CallbackFunction, HttpServer, NextCallbackFunction } from './HttpServer';
+import { StatusCodes } from 'http-status-codes';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export class ExpressHttpServer implements HttpServer {
@@ -13,8 +13,8 @@ export class ExpressHttpServer implements HttpServer {
     this.server.use(cors())
   }
 
-  on(method: string, url: string, callback: CallbackFunction): void {
-    this.server[method](url, async (req: Request, res: Response) => {
+  on(method: string, url: string, callback: CallbackFunction, ...middlewares: NextCallbackFunction[]): void {
+    const responseHandler = async (req: Request, res: Response) => {
       try {
         const { output, statusCode, emptyResponse = false } = await callback(req.params, req.body, req.query)
         const code = statusCode || StatusCodes.OK
@@ -23,7 +23,13 @@ export class ExpressHttpServer implements HttpServer {
       } catch (error: any) {
         return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ message: error.message })
       }
-    })
+    }
+
+    if (middlewares) {
+      return this.server[method](url, ...middlewares, responseHandler)
+    }
+
+    this.server[method](url, responseHandler)
   }
 
   listen(port: number): void {
