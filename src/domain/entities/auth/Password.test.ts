@@ -1,5 +1,4 @@
-import { expect, it } from 'vitest'
-import { Password } from './Password'
+import { Password } from './Password';
 
 const salt = 'salt'
 const clearPassword = 'abc123'

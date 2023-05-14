@@ -1,6 +1,5 @@
-import { Email } from './Email'
-import { expect, it } from 'vitest'
-import { faker } from '@faker-js/faker'
+import { Email } from './Email';
+import { faker } from '@faker-js/faker';
 
 it('creates an email object with a valid email', () => {
   const mockedEmail = faker.internet.email()
