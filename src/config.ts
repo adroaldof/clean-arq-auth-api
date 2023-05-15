@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config()
+
 export const config = {
   server: {
     env: process.env.NODE_ENV || 'development',
