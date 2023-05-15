@@ -1,5 +1,6 @@
 {
   "name": "clean-arq-auth-api",
+  "packageManager": "yarn@3.5.1",
   "description": "Clean Architecture API with JWT Authentication project",
   "version": "1.0.0",
   "author": "Adroaldo de Andrade <adroaldof@gmail.com>",
