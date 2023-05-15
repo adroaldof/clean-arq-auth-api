@@ -8,7 +8,7 @@
   "main": "src/main-rest-api.ts",
   "scripts": {
     "build": "tsc",
-    "start": "ts-node-dev --respawn -r tsconfig-paths/register ./src/main-rest-api.ts",
+    "start": "tsx --watch ./src/main-rest-api.ts",
     "dev": "docker compose up",
     "dtw": "docker compose -f docker-compose.test.yaml run api yarn jest --testMatch '/**/*.test.e2e.ts' --watchAll --detectOpenHandles",
     "dtc": "docker compose -f docker-compose.test.yaml run api yarn jest --testMatch '**/?(*.)+(test|test.e2e).ts' --coverage --detectOpenHandles --forceExit",
@@ -53,6 +53,7 @@
     "ts-node": "10.9.1",
     "ts-node-dev": "2.0.0",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^3.12.7",
     "typescript": "4.9.4"
   }
 }

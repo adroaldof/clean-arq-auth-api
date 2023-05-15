@@ -4,6 +4,7 @@
     "target": "ESNext",
     "module": "CommonJS",
     "outDir": "./dist",
+    "isolatedModules": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
