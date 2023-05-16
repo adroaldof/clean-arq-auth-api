@@ -1,4 +1,5 @@
-import { VerifyToken } from './VerifyToken';
+import { VerifyToken } from './VerifyToken'
+import { expect, it } from 'vitest'
 
 it('verifies a given access token', async () => {
   const accessToken =

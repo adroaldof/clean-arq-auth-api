@@ -1,3 +1,3 @@
-import { knexConfig } from './knexConfig';
+import { knexConfig } from './knexConfig'
 
 module.exports = knexConfig

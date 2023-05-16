@@ -1,7 +1,7 @@
-import path from 'path';
-import { config } from '@/config';
-import { Knex } from 'knex';
-import { snake, toCamel } from 'snake-camel';
+import path from 'path'
+import { config } from '@/config'
+import { Knex } from 'knex'
+import { snake, toCamel } from 'snake-camel'
 
 export const knexConfig = {
   client: config.database.client,
@@ -14,12 +14,14 @@ export const knexConfig = {
     password: config.database.password,
   },
   migrations: {
-    extension: 'ts',
+    extension: 'mjs',
+    loadExtensions: ['.mjs'],
     stub: path.join(__dirname, './stubs/migration.stub'),
     directory: path.join(__dirname, './migrations'),
   },
   seeds: {
-    extension: 'ts',
+    extension: 'mjs',
+    loadExtensions: ['.mjs'],
     stub: path.join(__dirname, './stubs/seed.stub'),
     directory: path.join(__dirname, './seeds'),
   },

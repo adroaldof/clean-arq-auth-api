@@ -1,12 +1,13 @@
-import supertest, { SuperTest, Test } from 'supertest';
-import { AuthController } from './AuthController';
-import { AuthRepositoryDatabase } from '@/infra/repositories/AuthRepositoryDatabase';
-import { ExpressHttpServer } from '@/http/ExpressHttpServer';
-import { faker } from '@faker-js/faker';
-import { KnexAdapter } from '@/database/KnexAdapter';
-import { SignUp } from '@/use-cases/auth/SignUp';
-import { StatusCodes } from 'http-status-codes';
-import { tableNames } from '@/database/table-names';
+import supertest, { SuperTest, Test } from 'supertest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { AuthController } from './AuthController'
+import { AuthRepositoryDatabase } from '@/repositories/AuthRepositoryDatabase'
+import { ExpressHttpServer } from '@/http/ExpressHttpServer'
+import { faker } from '@faker-js/faker'
+import { KnexAdapter } from '@/database/KnexAdapter'
+import { SignUp } from '@/use-cases/auth/SignUp'
+import { StatusCodes } from 'http-status-codes'
+import { tableNames } from '@/database/table-names'
 
 const httpServer = new ExpressHttpServer()
 const connection = new KnexAdapter()
