@@ -1,17 +1,18 @@
 import path from 'path'
-import { config } from '@/config'
-import { Knex } from 'knex'
 import { snake, toCamel } from 'snake-camel'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
 
-export const knexConfig = {
-  client: config.database.client,
-  /* istanbul ignore next */
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+export default {
+  client: process.env.DATABASE_CLIENT || 'pg',
   connection: {
-    host: config.database.host,
-    port: config.database.port,
-    database: config.database.database,
-    user: config.database.user,
-    password: config.database.password,
+    host: process.env.POSTGRES_HOST || '0.0.0.0',
+    port: +(process.env.POSTGRES_PORT || 5432),
+    database: process.env.POSTGRES_DB || 'postgres',
+    user: process.env.POSTGRES_USER || 'postgres',
+    password: process.env.POSTGRES_PASSWORD || 'postgres',
   },
   migrations: {
     extension: 'mjs',
@@ -27,4 +28,4 @@ export const knexConfig = {
   },
   postProcessResponse: (result) => (Array.isArray(result) ? result.map(toCamel) : toCamel(result)),
   wrapIdentifier: (value, origImpl) => origImpl(snake(value)),
-} as Knex.Config
+}
