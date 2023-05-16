@@ -1,5 +1,6 @@
-import { Auth } from './Auth';
-import { TokenGenerator } from './TokenGenerator';
+import { Auth } from './Auth'
+import { beforeEach, expect, it } from 'vitest'
+import { TokenGenerator } from './TokenGenerator'
 
 const secretOrPrivateKey = 'key'
 const expiresIn = 60 * 60 * 24 * 365 * 10 * 1000 // 10 years for test purpose only (seconds * minutes * hours * days * years * multiplier)

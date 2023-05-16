@@ -1,5 +1,6 @@
-import { Auth } from './Auth';
-import { faker } from '@faker-js/faker';
+import { Auth } from './Auth'
+import { faker } from '@faker-js/faker'
+import { expect, it } from 'vitest'
 
 const mockedEmail = faker.internet.email()
 

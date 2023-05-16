@@ -1,7 +1,6 @@
 import knex, { Knex } from 'knex'
-
+import knexConfig from './knexfile.mjs'
 import { Connection } from './Connection'
-import * as knexConfig from './knexfile'
 
 export class KnexAdapter implements Connection {
   connection: Knex

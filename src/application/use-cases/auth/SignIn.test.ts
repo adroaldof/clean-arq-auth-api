@@ -1,6 +1,7 @@
-import { Auth } from '@/entities/auth/Auth';
-import { mockAuthRepository } from '@/ports/AuthRepository.mocks';
-import { SignIn } from './SignIn';
+import { Auth } from '@/entities/auth/Auth'
+import { expect, it, vi } from 'vitest'
+import { mockAuthRepository } from '@/ports/AuthRepository.mocks'
+import { SignIn } from './SignIn'
 
 const payload = {
   email: 'john.doe@email.com',
@@ -11,7 +12,7 @@ it('returns the access token on authenticate the user', async () => {
   const authRepository = mockAuthRepository({
     get: () => Promise.resolve(Auth.create(payload.email, payload.password)),
   })
-  const getAuthSpy = jest.spyOn(authRepository, 'get')
+  const getAuthSpy = vi.spyOn(authRepository, 'get')
   const signIn = new SignIn(authRepository)
   const output = await signIn.execute(payload)
   expect(getAuthSpy).toBeCalled()
