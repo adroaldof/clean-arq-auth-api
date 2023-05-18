@@ -1,7 +1,7 @@
-import cors from 'cors';
-import express, { Request, Response } from 'express';
-import { CallbackFunction, HttpServer, NextCallbackFunction } from './HttpServer';
-import { StatusCodes } from 'http-status-codes';
+import cors from 'cors'
+import express, { Request, Response } from 'express'
+import { CallbackFunction, HttpServer, NextCallbackFunction } from './HttpServer'
+import { StatusCodes } from 'http-status-codes'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export class ExpressHttpServer implements HttpServer {

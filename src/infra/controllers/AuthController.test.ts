@@ -5,6 +5,7 @@ import { AuthRepositoryDatabase } from '@/repositories/AuthRepositoryDatabase'
 import { ExpressHttpServer } from '@/http/ExpressHttpServer'
 import { faker } from '@faker-js/faker'
 import { KnexAdapter } from '@/database/KnexAdapter'
+import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '@/use-cases/auth/SignUp'
 import { StatusCodes } from 'http-status-codes'
 import { tableNames } from '@/database/table-names'
@@ -13,10 +14,9 @@ const httpServer = new ExpressHttpServer()
 const connection = new KnexAdapter()
 
 const authRepository = new AuthRepositoryDatabase(connection)
-
 const signUp = new SignUp(authRepository)
-
-new AuthController(httpServer, signUp)
+const signIn = new SignIn(authRepository)
+new AuthController(httpServer, signUp, signIn)
 
 const request: SuperTest<Test> = supertest(httpServer.server)
 
@@ -84,5 +84,73 @@ describe('POST /api/sign-up', () => {
         path: ['body', 'password'],
       },
     ])
+  })
+})
+
+describe('POST /api/sign-in', () => {
+  it('returns the access token when the user and password are valid', async () => {
+    const input = { email: faker.internet.email(), password: faker.internet.password() }
+    await request.post('/api/auth/sign-up').send(input).expect(StatusCodes.ACCEPTED)
+    const { body: output } = await request.post('/api/auth/sign-in').send(input).expect(StatusCodes.OK)
+    expect(output).toEqual(expect.objectContaining({ accessToken: expect.any(String) }))
+  })
+
+  it('returns `400 Bad Request` error when sending an empty payload', async () => {
+    const { body: output } = await request.post('/api/auth/sign-in').send({}).expect(StatusCodes.BAD_REQUEST)
+    expect(output).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'string',
+        received: 'undefined',
+        path: ['body', 'email'],
+        message: 'email is required',
+      },
+      {
+        code: 'invalid_type',
+        expected: 'string',
+        received: 'undefined',
+        path: ['body', 'password'],
+        message: 'password is required',
+      },
+    ])
+  })
+
+  it('returns `400 Bad Request` error when sending a invalid email', async () => {
+    const input = { email: 'invalid@email', password: faker.internet.password() }
+    const { body: output } = await request.post('/api/auth/sign-in').send(input).expect(StatusCodes.BAD_REQUEST)
+    expect(output).toEqual([
+      {
+        code: 'invalid_string',
+        message: 'invalid email',
+        path: ['body', 'email'],
+        validation: 'email',
+      },
+    ])
+  })
+
+  it('returns `400 Bad Request` error when sending a short password', async () => {
+    const input = { email: faker.internet.email(), password: 'SHORT' }
+    const { body: output } = await request.post('/api/auth/sign-in').send(input).expect(StatusCodes.BAD_REQUEST)
+    expect(output).toEqual([
+      {
+        code: 'too_small',
+        message: 'password must be at least 8 characters long',
+        minimum: 8,
+        exact: false,
+        inclusive: true,
+        path: ['body', 'password'],
+        type: 'string',
+      },
+    ])
+  })
+
+  it('returns `422 Unprocessable Entity` error with `invalid email or password` message on sending wrong password', async () => {
+    const input = { email: faker.internet.email(), password: faker.internet.password() }
+    const { body: output } = await request
+      .post('/api/auth/sign-in')
+      .send({ ...input, password: 'wrong-password' })
+      .expect(StatusCodes.UNPROCESSABLE_ENTITY)
+    expect(output).toEqual(expect.objectContaining({ message: expect.any(String) }))
+    expect(output.message).toEqual('invalid email or password')
   })
 })

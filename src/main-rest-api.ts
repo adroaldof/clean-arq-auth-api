@@ -4,6 +4,7 @@ import { config } from './config'
 import { ExpressHttpServer } from './infra/http/ExpressHttpServer'
 import { KnexAdapter } from '@/database/KnexAdapter'
 import { RootController } from './infra/controllers/RootController'
+import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '@/use-cases/auth/SignUp'
 
 const connection = new KnexAdapter()
@@ -15,6 +16,7 @@ new RootController(httpServer)
 
 const authRepository = new AuthRepositoryDatabase(connection)
 const signUp = new SignUp(authRepository)
-new AuthController(httpServer, signUp)
+const signIn = new SignIn(authRepository)
+new AuthController(httpServer, signUp, signIn)
 
 httpServer.listen(config.server.port)

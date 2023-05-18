@@ -1,11 +1,22 @@
-import { HttpServer } from '../http/HttpServer';
-import { SignUp } from '../../application/use-cases/auth/SignUp';
-import { StatusCodes } from 'http-status-codes';
-import { validateSchemaMiddleware } from '@/http/validate-schema-middleware';
-import { z } from 'zod';
+import { HttpServer } from '../http/HttpServer'
+import { SignIn } from '@/use-cases/auth/SignIn'
+import { SignUp } from '../../application/use-cases/auth/SignUp'
+import { StatusCodes } from 'http-status-codes'
+import { validateSchemaMiddleware } from '@/http/validate-schema-middleware'
+import { z } from 'zod'
+
+const createAuthUserSchema = z.object({
+  body: z.object({
+    email: z.string({ required_error: 'email is required' }).email('invalid email'),
+    password: z
+      .string({ required_error: 'password is required' })
+      .min(8, 'password must be at least 8 characters long')
+      .max(128, 'password must be at most 128 characters long'),
+  }),
+})
 
 export class AuthController {
-  constructor(readonly httpServer: HttpServer, readonly signUp: SignUp) {
+  constructor(readonly httpServer: HttpServer, readonly signUp: SignUp, readonly signIn: SignIn) {
     this.httpServer.on(
       'post',
       '/api/auth/sign-up',
@@ -21,6 +32,16 @@ export class AuthController {
       },
       validateSchemaMiddleware(createAuthUserSchema),
     )
+
+    this.httpServer.on(
+      'post',
+      '/api/auth/sign-in',
+      async (_params: DetailParams, body: AuthInput) => {
+        const output = await this.signIn.execute(body)
+        return { output }
+      },
+      validateSchemaMiddleware(createAuthUserSchema),
+    )
   }
 }
 
@@ -30,13 +51,3 @@ type AuthInput = {
   email: string
   password: string
 }
-
-const createAuthUserSchema = z.object({
-  body: z.object({
-    email: z.string({ required_error: 'email is required' }).email('invalid email'),
-    password: z
-      .string({ required_error: 'password is required' })
-      .min(8, 'password must be at least 8 characters long')
-      .max(128, 'password must be at most 128 characters long'),
-  }),
-})
