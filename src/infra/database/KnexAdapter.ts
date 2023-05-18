@@ -2,6 +2,7 @@ import knex, { Knex } from 'knex'
 import knexConfig from './knexfile.mjs'
 import { Connection } from './Connection'
 
+/* c8 ignore start */
 export class KnexAdapter implements Connection {
   connection: Knex
 
@@ -25,3 +26,4 @@ export class KnexAdapter implements Connection {
     await this.connection.destroy()
   }
 }
+/* c8 ignore stop */

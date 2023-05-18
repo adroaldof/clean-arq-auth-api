@@ -3,6 +3,7 @@ import { snake, toCamel } from 'snake-camel'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 
+/* c8 ignore start */
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default {
@@ -29,3 +30,4 @@ export default {
   postProcessResponse: (result) => (Array.isArray(result) ? result.map(toCamel) : toCamel(result)),
   wrapIdentifier: (value, origImpl) => origImpl(snake(value)),
 }
+/* c8 ignore stop */

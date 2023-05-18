@@ -25,15 +25,17 @@ export class ExpressHttpServer implements HttpServer {
       }
     }
 
-    if (middlewares) {
+    if (middlewares?.length) {
       return this.server[method](url, ...middlewares, responseHandler)
     }
 
     this.server[method](url, responseHandler)
   }
 
+  /* c8 ignore start */
   listen(port: number): void {
     this.server.listen(port, () => console.info(`** Server listening on http://localhost:${port}/api`))
   }
+  /* c8 ignore stop */
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */

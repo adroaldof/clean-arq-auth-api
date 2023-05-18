@@ -3,20 +3,16 @@ import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '../../application/use-cases/auth/SignUp'
 import { StatusCodes } from 'http-status-codes'
 import { validateSchemaMiddleware } from '@/http/validate-schema-middleware'
+import { VerifyToken } from '@/use-cases/auth/VerifyToken'
 import { z } from 'zod'
 
-const createAuthUserSchema = z.object({
-  body: z.object({
-    email: z.string({ required_error: 'email is required' }).email('invalid email'),
-    password: z
-      .string({ required_error: 'password is required' })
-      .min(8, 'password must be at least 8 characters long')
-      .max(128, 'password must be at most 128 characters long'),
-  }),
-})
-
 export class AuthController {
-  constructor(readonly httpServer: HttpServer, readonly signUp: SignUp, readonly signIn: SignIn) {
+  constructor(
+    readonly httpServer: HttpServer,
+    readonly signUp: SignUp,
+    readonly signIn: SignIn,
+    readonly verifyToken: VerifyToken,
+  ) {
     this.httpServer.on(
       'post',
       '/api/auth/sign-up',
@@ -30,7 +26,7 @@ export class AuthController {
         }
         return { statusCode: StatusCodes.ACCEPTED, emptyResponse: true }
       },
-      validateSchemaMiddleware(createAuthUserSchema),
+      validateSchemaMiddleware(authUserSchema),
     )
 
     this.httpServer.on(
@@ -40,7 +36,17 @@ export class AuthController {
         const output = await this.signIn.execute(body)
         return { output }
       },
-      validateSchemaMiddleware(createAuthUserSchema),
+      validateSchemaMiddleware(authUserSchema),
+    )
+
+    this.httpServer.on(
+      'post',
+      '/api/auth/verify',
+      async (_params: DetailParams, body: VerifyTokenInput) => {
+        const output = await this.verifyToken.execute(body)
+        return { output }
+      },
+      validateSchemaMiddleware(tokenSchema),
     )
   }
 }
@@ -51,3 +57,23 @@ type AuthInput = {
   email: string
   password: string
 }
+
+type VerifyTokenInput = {
+  accessToken: string
+}
+
+const authUserSchema = z.object({
+  body: z.object({
+    email: z.string({ required_error: 'email is required' }).email('invalid email'),
+    password: z
+      .string({ required_error: 'password is required' })
+      .min(8, 'password must be at least 8 characters long')
+      .max(128, 'password must be at most 128 characters long'),
+  }),
+})
+
+const tokenSchema = z.object({
+  body: z.object({
+    accessToken: z.string({ required_error: 'access token is required' }),
+  }),
+})

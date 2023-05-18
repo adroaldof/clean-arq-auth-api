@@ -1,4 +1,4 @@
-import { Algorithm, JwtPayload, sign, SignOptions, verify } from 'jsonwebtoken'
+import jwt, { Algorithm, JwtPayload, SignOptions } from 'jsonwebtoken'
 import { Auth } from './Auth'
 
 const ALGORITHM: Algorithm = 'HS512'
@@ -17,10 +17,10 @@ export class TokenGenerator {
     const exp = iat + expiresIn
     const payload: JwtSignPayload = { email: user.email.getValue(), iat, exp }
     const options: SignOptions = { algorithm: ALGORITHM }
-    return sign(payload, this.secretOrPrivateKey, options)
+    return jwt.sign(payload, this.secretOrPrivateKey, options)
   }
 
   verify(token: string): JwtPayload {
-    return verify(token, this.secretOrPrivateKey) as JwtPayload
+    return jwt.verify(token, this.secretOrPrivateKey) as JwtPayload
   }
 }

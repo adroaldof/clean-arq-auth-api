@@ -9,6 +9,7 @@ import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '@/use-cases/auth/SignUp'
 import { StatusCodes } from 'http-status-codes'
 import { tableNames } from '@/database/table-names'
+import { VerifyToken } from '@/use-cases/auth/VerifyToken'
 
 const httpServer = new ExpressHttpServer()
 const connection = new KnexAdapter()
@@ -16,7 +17,8 @@ const connection = new KnexAdapter()
 const authRepository = new AuthRepositoryDatabase(connection)
 const signUp = new SignUp(authRepository)
 const signIn = new SignIn(authRepository)
-new AuthController(httpServer, signUp, signIn)
+const verifyToken = new VerifyToken()
+new AuthController(httpServer, signUp, signIn, verifyToken)
 
 const request: SuperTest<Test> = supertest(httpServer.server)
 
@@ -43,7 +45,7 @@ describe('POST /api/sign-up', () => {
     await request.post('/api/auth/sign-up').send(input).expect(StatusCodes.ACCEPTED)
   })
 
-  it('returns `400 Bad Request` when sending an empty payload', async () => {
+  it('returns `400 Bad Request` when sending an empty input', async () => {
     const input = {}
     const { body } = await request.post('/api/auth/sign-up').send(input).expect(StatusCodes.BAD_REQUEST)
     expect(body).toEqual([
@@ -95,7 +97,7 @@ describe('POST /api/sign-in', () => {
     expect(output).toEqual(expect.objectContaining({ accessToken: expect.any(String) }))
   })
 
-  it('returns `400 Bad Request` error when sending an empty payload', async () => {
+  it('returns `400 Bad Request` error when sending an empty input', async () => {
     const { body: output } = await request.post('/api/auth/sign-in').send({}).expect(StatusCodes.BAD_REQUEST)
     expect(output).toEqual([
       {
@@ -152,5 +154,39 @@ describe('POST /api/sign-in', () => {
       .expect(StatusCodes.UNPROCESSABLE_ENTITY)
     expect(output).toEqual(expect.objectContaining({ message: expect.any(String) }))
     expect(output.message).toEqual('invalid email or password')
+  })
+})
+
+describe('POST /api/verify', () => {
+  it('returns `200 OK` when the token is valid', async () => {
+    const accessToken =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQGVtYWlsLmNvbSIsImlhdCI6MTY4MTA0NTIwMDAwMCwiZXhwIjoxOTk2NDA1MjAwMDAwfQ.NSHEzWBPUXM6qvw48k7PpijBx8iv-epyXZneCeIuJm4'
+    const { body: output } = await request.post('/api/auth/verify').send({ accessToken }).expect(StatusCodes.OK)
+    expect(output.email).toBe('john.doe@email.com')
+    expect(output.iat).toBe(1681045200000)
+    expect(output.exp).toBe(1996405200000)
+  })
+
+  it('returns `422 Unprocessable Entity` error with `invalid token` message', async () => {
+    const removedFiveFirstCharactersJwt =
+      'GciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQGVtYWlsLmNvbSIsImlhdCI6MTY4MTA0NTIwMDAwMCwiZXhwIjoxOTk2NDA1MjAwMDAwfQ.NSHEzWBPUXM6qvw48k7PpijBx8iv-epyXZneCeIuJm4'
+    const { body: output } = await request
+      .post('/api/auth/verify')
+      .send({ accessToken: removedFiveFirstCharactersJwt })
+      .expect(StatusCodes.UNPROCESSABLE_ENTITY)
+    expect(output.message).toBe('invalid token')
+  })
+
+  it('returns `400 Bad Request` error with `access token is required` message when sending an empty input', async () => {
+    const { body: output } = await request.post('/api/auth/verify').send({}).expect(StatusCodes.BAD_REQUEST)
+    expect(output).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'string',
+        received: 'undefined',
+        path: ['body', 'accessToken'],
+        message: 'access token is required',
+      },
+    ])
   })
 })

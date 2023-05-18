@@ -6,6 +6,7 @@ import { KnexAdapter } from '@/database/KnexAdapter'
 import { RootController } from './infra/controllers/RootController'
 import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '@/use-cases/auth/SignUp'
+import { VerifyToken } from '@/use-cases/auth/VerifyToken'
 
 const connection = new KnexAdapter()
 connection.migrate()
@@ -17,6 +18,7 @@ new RootController(httpServer)
 const authRepository = new AuthRepositoryDatabase(connection)
 const signUp = new SignUp(authRepository)
 const signIn = new SignIn(authRepository)
-new AuthController(httpServer, signUp, signIn)
+const verifyToken = new VerifyToken()
+new AuthController(httpServer, signUp, signIn, verifyToken)
 
 httpServer.listen(config.server.port)
