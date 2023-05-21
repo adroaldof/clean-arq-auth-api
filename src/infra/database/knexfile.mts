@@ -7,7 +7,6 @@ import { snake, toCamel } from 'snake-camel'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default {
-  debug: true,
   client: process.env.DATABASE_CLIENT || 'pg',
   connection: {
     host: process.env.POSTGRES_HOST || '0.0.0.0',
