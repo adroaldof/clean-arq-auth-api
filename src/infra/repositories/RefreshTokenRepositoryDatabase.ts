@@ -1,6 +1,6 @@
-import { Connection } from '@/database/Connection';
-import { RefreshTokenInput, RefreshTokenRepository } from '@/ports/RefreshTokenRepository';
-import { tableNames } from '@/database/table-names';
+import { Connection } from '@/database/Connection'
+import { RefreshTokenInput, RefreshTokenRepository } from '@/ports/RefreshTokenRepository'
+import { tableNames } from '@/database/table-names.mjs'
 
 export class RefreshTokenRepositoryDatabase implements RefreshTokenRepository {
   constructor(readonly connection: Connection) {}
