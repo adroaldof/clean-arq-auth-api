@@ -1,12 +1,13 @@
 import path from 'path'
-import { snake, toCamel } from 'snake-camel'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { snake, toCamel } from 'snake-camel'
 
 /* c8 ignore start */
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default {
+  debug: true,
   client: process.env.DATABASE_CLIENT || 'pg',
   connection: {
     host: process.env.POSTGRES_HOST || '0.0.0.0',
@@ -16,18 +17,18 @@ export default {
     password: process.env.POSTGRES_PASSWORD || 'postgres',
   },
   migrations: {
-    extension: 'mjs',
-    loadExtensions: ['.mjs'],
+    extension: 'mts',
+    loadExtensions: ['.mts'],
     stub: path.join(__dirname, './stubs/migration.stub'),
     directory: path.join(__dirname, './migrations'),
   },
   seeds: {
-    extension: 'mjs',
-    loadExtensions: ['.mjs'],
+    extension: 'mts',
+    loadExtensions: ['.mts'],
     stub: path.join(__dirname, './stubs/seed.stub'),
     directory: path.join(__dirname, './seeds'),
   },
-  postProcessResponse: (result) => (Array.isArray(result) ? result.map(toCamel) : toCamel(result)),
-  wrapIdentifier: (value, origImpl) => origImpl(snake(value)),
+  postProcessResponse: (result: any) => (Array.isArray(result) ? result.map(toCamel) : toCamel(result)),
+  wrapIdentifier: (value: any, origImpl: any) => origImpl(snake(value)),
 }
 /* c8 ignore stop */
