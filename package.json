@@ -17,10 +17,10 @@
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "make-migration": "node --experimental-modules ./node_modules/.bin/knex migrate:make --knexfile ./src/infra/database/knexfile.mjs",
-    "run-migrations": "node --experimental-modules ./node_modules/.bin/knex migrate:latest --knexfile ./src/infra/database/knexfile.ts",
-    "rollback-migrations": "node --experimental-modules ./node_modules/.bin/knex migrate:rollback --knexfile ./src/infra/database/knexfile.ts",
-    "make-seed": "node --experimental-modules ./node_modules/.bin/knex seed:make --knexfile ./src/infra/database/knexfile.ts",
-    "run-seed": "node --experimental-modules ./node_modules/.bin/knex seed:run --knexfile ./src/infra/database/knexfile.ts",
+    "run-migrations": "node --experimental-modules ./node_modules/.bin/knex migrate:latest --knexfile ./src/infra/database/knexfile.mjs",
+    "rollback-migration": "node --experimental-modules ./node_modules/.bin/knex migrate:rollback --knexfile ./src/infra/database/knexfile.mjs",
+    "make-seed": "node --experimental-modules ./node_modules/.bin/knex seed:make --knexfile ./src/infra/database/knexfile.mjs",
+    "run-seed": "node --experimental-modules ./node_modules/.bin/knex seed:run --knexfile ./src/infra/database/knexfile.mjs",
     "lint": "eslint --ext .ts src/ --fix"
   },
   "dependencies": {
