@@ -1,7 +1,7 @@
-import { Auth } from '@/entities/auth/Auth';
-import { AuthRepository } from '@/ports/AuthRepository';
-import { Connection } from '@/database/Connection';
-import { tableNames } from '@/database/table-names';
+import { Auth } from '@/entities/auth/Auth'
+import { AuthRepository } from '@/ports/AuthRepository'
+import { Connection } from '@/database/Connection'
+import { tableNames } from '@/database/table-names.mjs'
 
 export class AuthRepositoryDatabase implements AuthRepository {
   constructor(readonly connection: Connection) {}

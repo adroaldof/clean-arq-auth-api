@@ -1,10 +1,6 @@
+import { defaultStatuses } from '../migrations-commons.mjs'
 import { Knex } from 'knex'
-
-const defaultStatuses = ['active', 'deleted']
-
-const tableNames = {
-  auth: 'auth',
-}
+import { tableNames } from '../table-names.mjs'
 
 export const up = async (knex: Knex): Promise<Knex.SchemaBuilder> =>
   knex.schema.createTable(tableNames.auth, (table: Knex.CreateTableBuilder) => {
