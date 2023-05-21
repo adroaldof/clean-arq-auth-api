@@ -4,7 +4,9 @@ import { AuthController } from './AuthController'
 import { AuthRepositoryDatabase } from '@/repositories/AuthRepositoryDatabase'
 import { ExpressHttpServer } from '@/http/ExpressHttpServer'
 import { faker } from '@faker-js/faker'
+import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken'
 import { KnexAdapter } from '@/database/KnexAdapter'
+import { RefreshTokenRepositoryDatabase } from '@/repositories/RefreshTokenRepositoryDatabase'
 import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '@/use-cases/auth/SignUp'
 import { StatusCodes } from 'http-status-codes'
@@ -15,10 +17,12 @@ const httpServer = new ExpressHttpServer()
 const connection = new KnexAdapter()
 
 const authRepository = new AuthRepositoryDatabase(connection)
+const refreshTokenRepository = new RefreshTokenRepositoryDatabase(connection)
 const signUp = new SignUp(authRepository)
-const signIn = new SignIn(authRepository)
+const signIn = new SignIn(authRepository, refreshTokenRepository)
 const verifyToken = new VerifyToken()
-new AuthController(httpServer, signUp, signIn, verifyToken)
+const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(refreshTokenRepository, authRepository)
+new AuthController(httpServer, signUp, signIn, verifyToken, generateAuthTokenFromRefreshToken)
 
 const request: SuperTest<Test> = supertest(httpServer.server)
 
@@ -30,7 +34,7 @@ afterEach(async () => {
   await connection.rollback()
 })
 
-describe('POST /api/sign-up', () => {
+describe('POST /api/auth/sign-up', () => {
   it('returns `202 Accepted` when creating an auth user with valid email and password', async () => {
     const input = { email: faker.internet.email(), password: faker.internet.password() }
     const { body } = await request.post('/api/auth/sign-up').send(input).expect(StatusCodes.ACCEPTED)
@@ -89,12 +93,17 @@ describe('POST /api/sign-up', () => {
   })
 })
 
-describe('POST /api/sign-in', () => {
+describe('POST /api/auth/sign-in', () => {
   it('returns the access token when the user and password are valid', async () => {
     const input = { email: faker.internet.email(), password: faker.internet.password() }
     await request.post('/api/auth/sign-up').send(input).expect(StatusCodes.ACCEPTED)
     const { body: output } = await request.post('/api/auth/sign-in').send(input).expect(StatusCodes.OK)
-    expect(output).toEqual(expect.objectContaining({ accessToken: expect.any(String) }))
+    expect(output).toEqual(
+      expect.objectContaining({
+        accessToken: expect.any(String),
+        refreshToken: expect.any(String),
+      }),
+    )
   })
 
   it('returns `400 Bad Request` error when sending an empty input', async () => {
@@ -157,7 +166,7 @@ describe('POST /api/sign-in', () => {
   })
 })
 
-describe('POST /api/verify', () => {
+describe('POST /api/auth/verify', () => {
   it('returns `200 OK` when the token is valid', async () => {
     const accessToken =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQGVtYWlsLmNvbSIsImlhdCI6MTY4MTA0NTIwMDAwMCwiZXhwIjoxOTk2NDA1MjAwMDAwfQ.NSHEzWBPUXM6qvw48k7PpijBx8iv-epyXZneCeIuJm4'
@@ -188,5 +197,32 @@ describe('POST /api/verify', () => {
         message: 'access token is required',
       },
     ])
+  })
+})
+
+describe('POST /api/auth/refresh', () => {
+  it('returns `201 Created` when the validation token is correct', async () => {
+    const input = { email: faker.internet.email(), password: faker.internet.password() }
+    await request.post('/api/auth/sign-up').send(input).expect(StatusCodes.ACCEPTED)
+    const { body: signInOutput } = await request.post('/api/auth/sign-in').send(input).expect(StatusCodes.OK)
+    const { body: output } = await request
+      .post('/api/auth/refresh')
+      .send({ refreshToken: signInOutput.refreshToken })
+      .expect(StatusCodes.CREATED)
+    expect(output).toEqual(
+      expect.objectContaining({
+        accessToken: expect.any(String),
+      }),
+    )
+  })
+
+  it('returns `422 Unprocessable Entity` error with `invalid refresh token` message when refresh token is not found', async () => {
+    const refreshToken =
+      'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJyZWZyZXNoVG9rZW5VdWlkIjoiNTNjOWRiZWEtN2M1NS00YTk4LWIyMGYtMmFlNjRjMzI4MjhhIiwiaWF0IjoxNjg0NjgxMzc5NzkxLCJleHAiOjE2ODU1NDUzNzk3OTF9.dhLuC9FJIUs6wNUZCCxmFjerdbytvUFIsI9JdpBjxgCpFH4nB60NQZe6aV89AVs_FDlmEEapZBPuCSk60iiPtw'
+    const { body: output } = await request
+      .post('/api/auth/refresh')
+      .send({ refreshToken })
+      .expect(StatusCodes.UNPROCESSABLE_ENTITY)
+    expect(output.message).toEqual('invalid refresh token')
   })
 })

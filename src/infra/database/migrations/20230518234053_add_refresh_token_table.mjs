@@ -2,18 +2,17 @@
 const defaultStatuses = ['active', 'deleted']
 
 const tableNames = {
-  auth: 'auth',
+  authRefreshToken: 'refresh_token',
 }
 
 export const up = async (knex) =>
-  knex.schema.createTable(tableNames.auth, (table) => {
+  knex.schema.createTable(tableNames.authRefreshToken, (table) => {
     table.increments('id', { primaryKey: false })
     table.uuid('uuid', { primaryKey: true }).notNullable().defaultTo(knex.raw('uuid_generate_v4()'))
-    table.string('email').notNullable().unique()
-    table.string('password').notNullable()
-    table.string('salt').notNullable()
+    table.string('user_email').notNullable()
+    table.datetime('expires_at').notNullable()
     table.enum('status', defaultStatuses).defaultTo('active')
     table.timestamps({ useTimestamps: true, defaultToNow: true })
   })
 
-export const down = async (knex) => knex.schema.dropTable(tableNames.auth)
+export const down = async (knex) => knex.schema.dropTable(tableNames.authRefreshToken)
