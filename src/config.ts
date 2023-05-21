@@ -1,6 +1,7 @@
-import * as dotenv from 'dotenv';
+import * as dotenv from 'dotenv'
 dotenv.config()
 
+/* c8 ignore start */
 export const config = {
   server: {
     env: process.env.NODE_ENV || 'development',
@@ -15,4 +16,8 @@ export const config = {
     user: process.env.POSTGRES_USER || 'postgres',
     password: process.env.POSTGRES_PASSWORD || 'postgres',
   },
+  token: {
+    signKey: process.env.TOKEN_SIGN_KEY || 'key',
+  },
 }
+/* c8 ignore stop */

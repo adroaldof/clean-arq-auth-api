@@ -1,10 +1,11 @@
-import { HttpServer } from '../http/HttpServer'
-import { SignIn } from '@/use-cases/auth/SignIn'
-import { SignUp } from '../../application/use-cases/auth/SignUp'
-import { StatusCodes } from 'http-status-codes'
-import { validateSchemaMiddleware } from '@/http/validate-schema-middleware'
-import { VerifyToken } from '@/use-cases/auth/VerifyToken'
-import { z } from 'zod'
+import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken';
+import { HttpServer } from '../http/HttpServer';
+import { SignIn } from '@/use-cases/auth/SignIn';
+import { SignUp } from '../../application/use-cases/auth/SignUp';
+import { StatusCodes } from 'http-status-codes';
+import { validateSchemaMiddleware } from '@/http/validate-schema-middleware';
+import { VerifyToken } from '@/use-cases/auth/VerifyToken';
+import { z } from 'zod';
 
 export class AuthController {
   constructor(
@@ -12,6 +13,7 @@ export class AuthController {
     readonly signUp: SignUp,
     readonly signIn: SignIn,
     readonly verifyToken: VerifyToken,
+    readonly generateAuthTokenFromRefreshToken: GenerateAuthTokenFromRefreshToken,
   ) {
     this.httpServer.on(
       'post',
@@ -48,6 +50,16 @@ export class AuthController {
       },
       validateSchemaMiddleware(tokenSchema),
     )
+
+    this.httpServer.on(
+      'post',
+      '/api/auth/refresh',
+      async (_params: DetailParams, body: RefreshTokenInput) => {
+        const output = await this.generateAuthTokenFromRefreshToken.execute(body)
+        return { output, statusCode: StatusCodes.CREATED }
+      },
+      validateSchemaMiddleware(refreshTokenSchema),
+    )
   }
 }
 
@@ -60,6 +72,10 @@ type AuthInput = {
 
 type VerifyTokenInput = {
   accessToken: string
+}
+
+type RefreshTokenInput = {
+  refreshToken: string
 }
 
 const authUserSchema = z.object({
@@ -75,5 +91,11 @@ const authUserSchema = z.object({
 const tokenSchema = z.object({
   body: z.object({
     accessToken: z.string({ required_error: 'access token is required' }),
+  }),
+})
+
+const refreshTokenSchema = z.object({
+  body: z.object({
+    refreshToken: z.string({ required_error: 'refresh token is required' }),
   }),
 })

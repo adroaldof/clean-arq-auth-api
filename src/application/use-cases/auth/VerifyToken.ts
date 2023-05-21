@@ -1,9 +1,10 @@
-import { JwtPayload } from 'jsonwebtoken'
-import { TokenGenerator } from '@/entities/auth/TokenGenerator'
+import { config } from '@/config';
+import { JwtPayload } from 'jsonwebtoken';
+import { TokenGenerator } from '@/entities/auth/TokenGenerator';
 
 export class VerifyToken {
   async execute(input: VerifyTokenInput): Promise<JwtPayload | string> {
-    const tokenGenerator = new TokenGenerator('key')
+    const tokenGenerator = new TokenGenerator(config.token.signKey)
     return tokenGenerator.verify(input.accessToken)
   }
 }
