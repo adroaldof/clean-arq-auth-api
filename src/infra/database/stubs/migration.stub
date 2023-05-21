@@ -1,10 +1,8 @@
-import { Knex } from 'knex'
-
 import { defaultStatuses } from '../migrations-commons'
 import { tableNames } from '../table-names'
 
-export const up = async (knex: Knex): Promise<Knex.SchemaBuilder> =>
-  knex.schema.createTable(tableNames.XXXXX, (table: Knex.CreateTableBuilder) => {
+export const up = async (knex) =>
+  knex.schema.createTable(tableNames.XXXXX, (table) => {
     table.increments('id', { primaryKey: false })
     table.uuid('uuid', { primaryKey: true }).notNullable().defaultTo(knex.raw('uuid_generate_v4()'))
     // TODO: place table columns definitions here
@@ -12,4 +10,4 @@ export const up = async (knex: Knex): Promise<Knex.SchemaBuilder> =>
     table.timestamps({ useTimestamps: true, defaultToNow: true })
   })
 
-export const down = async (knex: Knex): Promise<Knex.SchemaBuilder> => knex.schema.dropTable(tableNames.XXXXX)
+export const down = async (knex) => knex.schema.dropTable(tableNames.XXXXX)

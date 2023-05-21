@@ -7,6 +7,9 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [],
   test: {
+    deps: {
+      fallbackCJS: true,
+    },
     globals: true,
     coverage: {
       reporter: ['text', 'text-summary', 'html'],

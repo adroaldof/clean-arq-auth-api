@@ -10,7 +10,7 @@ import { RefreshTokenRepositoryDatabase } from '@/repositories/RefreshTokenRepos
 import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '@/use-cases/auth/SignUp'
 import { StatusCodes } from 'http-status-codes'
-import { tableNames } from '@/database/table-names'
+import { tableNames } from '@/database/table-names.mjs'
 import { VerifyToken } from '@/use-cases/auth/VerifyToken'
 
 const httpServer = new ExpressHttpServer()

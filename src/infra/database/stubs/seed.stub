@@ -1,8 +1,6 @@
-import { Knex } from 'knex'
-
 import { tableNames } from '../table-names'
 
-export const seed = async (knex: Knex): Promise<void> => {
+export const seed = async (knex) => {
   // Deletes ALL existing entries
   await knex(tableNames).del()
 

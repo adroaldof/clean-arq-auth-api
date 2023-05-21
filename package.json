@@ -16,11 +16,11 @@
     "dsa": "docker container stop $(docker container list -q) || true && docker rm $(docker container list -aq) || true",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "make-migration": "tsx ./node_modules/.bin/knex migrate:make --knexfile ./src/infra/database/knexfile.mts",
-    "run-migrations": "tsx ./node_modules/.bin/knex migrate:latest --knexfile ./src/infra/database/knexfile.mts",
-    "rollback-migration": "tsx ./node_modules/.bin/knex migrate:rollback --knexfile ./src/infra/database/knexfile.mts",
-    "make-seed": "tsx ./node_modules/.bin/knex seed:make --knexfile ./src/infra/database/knexfile.mts",
-    "run-seed": "tsx ./node_modules/.bin/knex seed:run --knexfile ./src/infra/database/knexfile.mts",
+    "make-migration": "tsx ./node_modules/.bin/knex migrate:make --knexfile ./src/infra/database/knexfile.mjs",
+    "run-migrations": "tsx ./node_modules/.bin/knex migrate:latest --knexfile ./src/infra/database/knexfile.mjs",
+    "rollback-migration": "tsx ./node_modules/.bin/knex migrate:rollback --knexfile ./src/infra/database/knexfile.mjs",
+    "make-seed": "tsx ./node_modules/.bin/knex seed:make --knexfile ./src/infra/database/knexfile.mjs",
+    "run-seed": "tsx ./node_modules/.bin/knex seed:run --knexfile ./src/infra/database/knexfile.mjs",
     "lint": "eslint --ext .ts src/ --fix"
   },
   "dependencies": {
