@@ -12,6 +12,8 @@ postgres/
 ###############################################################################
 
 .*
+.pnp.*
+.yarn/*
 *.log
 
 ###############################################################################
@@ -20,15 +22,14 @@ postgres/
 
 !.editorconfig
 !.eslintrc.js
+!.gitattributes
 !.gitignore
 !.nvmrc
 !.prettierrc
 !.vscode
-!.yarnrc.yml
-.pnp.*
-.yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+!.yarnrc.yml
