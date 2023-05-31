@@ -5,7 +5,7 @@ export class SignUp {
   constructor(readonly authRepository: AuthRepository) {}
 
   async execute(input: SignUpInput): Promise<void> {
-    const auth = await Auth.create(input.email, input.password)
+    const auth = await Auth.create(input.email, input.password, input.name, input.profilePictureUrl)
     return this.authRepository.save(auth)
   }
 }
@@ -13,4 +13,6 @@ export class SignUp {
 type SignUpInput = {
   email: string
   password: string
+  name?: string
+  profilePictureUrl?: string
 }

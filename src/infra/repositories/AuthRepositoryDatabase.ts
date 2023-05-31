@@ -26,5 +26,7 @@ const fromAuthToDatabaseInput = (auth: Auth): any => {
     email: auth.getEmail().getValue(),
     password: auth.getPassword().getValue(),
     salt: auth.getPassword().getSalt(),
+    name: auth.getName(),
+    profilePictureUrl: auth.getProfilePictureUrl(),
   }
 }

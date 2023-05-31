@@ -1,11 +1,11 @@
-import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken';
-import { HttpServer } from '../http/HttpServer';
-import { SignIn } from '@/use-cases/auth/SignIn';
-import { SignUp } from '../../application/use-cases/auth/SignUp';
-import { StatusCodes } from 'http-status-codes';
-import { validateSchemaMiddleware } from '@/http/validate-schema-middleware';
-import { VerifyToken } from '@/use-cases/auth/VerifyToken';
-import { z } from 'zod';
+import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken'
+import { HttpServer } from '../http/HttpServer'
+import { SignIn } from '@/use-cases/auth/SignIn'
+import { SignUp } from '../../application/use-cases/auth/SignUp'
+import { StatusCodes } from 'http-status-codes'
+import { validateSchemaMiddleware } from '@/http/validate-schema-middleware'
+import { VerifyToken } from '@/use-cases/auth/VerifyToken'
+import { z } from 'zod'
 
 export class AuthController {
   constructor(
@@ -28,7 +28,7 @@ export class AuthController {
         }
         return { statusCode: StatusCodes.ACCEPTED, emptyResponse: true }
       },
-      validateSchemaMiddleware(authUserSchema),
+      validateSchemaMiddleware(signUpSchema),
     )
 
     this.httpServer.on(
@@ -38,7 +38,7 @@ export class AuthController {
         const output = await this.signIn.execute(body)
         return { output }
       },
-      validateSchemaMiddleware(authUserSchema),
+      validateSchemaMiddleware(signUpSchema),
     )
 
     this.httpServer.on(
@@ -68,6 +68,8 @@ type DetailParams = undefined
 type AuthInput = {
   email: string
   password: string
+  name?: string
+  profilePictureUrl?: string
 }
 
 type VerifyTokenInput = {
@@ -78,13 +80,25 @@ type RefreshTokenInput = {
   refreshToken: string
 }
 
-const authUserSchema = z.object({
+const signUpSchema = z.object({
   body: z.object({
     email: z.string({ required_error: 'email is required' }).email('invalid email'),
     password: z
       .string({ required_error: 'password is required' })
       .min(8, 'password must be at least 8 characters long')
       .max(128, 'password must be at most 128 characters long'),
+    name: z
+      .string()
+      .min(2, 'name must be at least 2 characters long')
+      .max(256, 'name must be at most 256 characters long')
+      .nullable()
+      .optional(),
+    profilePictureUrl: z
+      .string()
+      .min(2, 'name must be at least 2 characters long')
+      .max(256, 'name must be at most 256 characters long')
+      .nullable()
+      .optional(),
   }),
 })
 
