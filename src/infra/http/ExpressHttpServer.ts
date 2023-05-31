@@ -16,7 +16,7 @@ export class ExpressHttpServer implements HttpServer {
   on(method: string, url: string, callback: CallbackFunction, ...middlewares: NextCallbackFunction[]): void {
     const responseHandler = async (req: Request, res: Response) => {
       try {
-        const { output, statusCode, emptyResponse = false } = await callback(req.params, req.body, req.query)
+        const { output, statusCode, emptyResponse = false } = await callback(req)
         const code = statusCode || StatusCodes.OK
         if (emptyResponse) return res.sendStatus(code)
         return res.status(code).send(output)

@@ -18,7 +18,7 @@ export class AuthController {
     this.httpServer.on(
       'post',
       '/api/auth/sign-up',
-      async (_params: DetailParams, body: AuthInput) => {
+      async ({ body }: { body: SignUpInput }) => {
         try {
           await this.signUp.execute(body)
         } catch (error: any) {
@@ -34,7 +34,7 @@ export class AuthController {
     this.httpServer.on(
       'post',
       '/api/auth/sign-in',
-      async (_params: DetailParams, body: AuthInput) => {
+      async ({ body }: { body: SignUpInput }) => {
         const output = await this.signIn.execute(body)
         return { output }
       },
@@ -44,7 +44,7 @@ export class AuthController {
     this.httpServer.on(
       'post',
       '/api/auth/verify',
-      async (_params: DetailParams, body: VerifyTokenInput) => {
+      async ({ body }: { body: VerifyTokenInput }) => {
         const output = await this.verifyToken.execute(body)
         return { output }
       },
@@ -54,7 +54,7 @@ export class AuthController {
     this.httpServer.on(
       'post',
       '/api/auth/refresh',
-      async (_params: DetailParams, body: RefreshTokenInput) => {
+      async ({ body }: { body: RefreshTokenInput }) => {
         const output = await this.generateAuthTokenFromRefreshToken.execute(body)
         return { output, statusCode: StatusCodes.CREATED }
       },
@@ -63,9 +63,7 @@ export class AuthController {
   }
 }
 
-type DetailParams = undefined
-
-type AuthInput = {
+type SignUpInput = {
   email: string
   password: string
   name?: string

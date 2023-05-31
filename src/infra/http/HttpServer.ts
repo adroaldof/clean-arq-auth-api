@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
+import { NextFunction, Request, Response } from 'express'
+import { StatusCodes } from 'http-status-codes'
 
 export interface HttpServer {
   on(method: string, url: string, callback: CallbackFunction, ...middlewares: any): void
@@ -7,7 +7,7 @@ export interface HttpServer {
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type CallbackFunction = (params?: any, body?: any, query?: any) => Promise<CallbackOutput>
+export type CallbackFunction = (req: Request) => Promise<CallbackOutput>
 export type NextCallbackFunction = (req: Request, res: Response, next: NextFunction) => void
 
 type CallbackOutput = {
