@@ -18,7 +18,13 @@ export class AuthRepositoryDatabase implements AuthRepository {
 }
 
 const fromDatabaseOutputToAuth = async (databaseOutput: any): Promise<Auth> => {
-  return Auth.buildExistingAuthUser(databaseOutput.email, databaseOutput.password, databaseOutput.salt)
+  return Auth.buildExistingAuthUser(
+    databaseOutput.email,
+    databaseOutput.password,
+    databaseOutput.salt,
+    databaseOutput.name,
+    databaseOutput.profilePictureUrl,
+  )
 }
 
 const fromAuthToDatabaseInput = (auth: Auth): any => {
