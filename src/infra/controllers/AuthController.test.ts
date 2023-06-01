@@ -1,7 +1,7 @@
 import supertest, { SuperTest, Test } from 'supertest'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { AuthController } from './AuthController'
 import { AuthRepositoryDatabase } from '@/repositories/AuthRepositoryDatabase'
+import { describe, expect, it } from 'vitest'
 import { ExpressHttpServer } from '@/http/ExpressHttpServer'
 import { faker } from '@faker-js/faker'
 import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken'
@@ -25,14 +25,6 @@ const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(
 new AuthController(httpServer, signUp, signIn, verifyToken, generateAuthTokenFromRefreshToken)
 
 const request: SuperTest<Test> = supertest(httpServer.server)
-
-beforeEach(async () => {
-  await connection.migrate()
-})
-
-afterEach(async () => {
-  await connection.rollback()
-})
 
 describe('POST /api/auth/sign-up', () => {
   it('returns `202 Accepted` when creating an auth user with valid email and password', async () => {

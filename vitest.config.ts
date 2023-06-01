@@ -7,14 +7,15 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [],
   test: {
+    globals: true,
     deps: {
       fallbackCJS: true,
     },
-    globals: true,
     coverage: {
       reporter: ['text', 'text-summary', 'html'],
       skipFull: true,
     },
+    globalSetup: ['./test-utils/migrate-on-setup-and-tear-down.ts'],
   },
   resolve: {
     alias: {

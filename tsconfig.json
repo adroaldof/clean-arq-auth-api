@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "types"],
+  "include": ["src", "test-utils", "types"],
   "exclude": ["node_modules"]
 }

@@ -1,5 +1,5 @@
-import { defaultStatuses } from '../migrations-commons'
-import { tableNames } from '../table-names'
+import { defaultStatuses } from '../migrations-commons.mjs'
+import { tableNames } from '../table-names.mjs'
 
 export const up = async (knex) =>
   knex.schema.createTable(tableNames.XXXXX, (table) => {
