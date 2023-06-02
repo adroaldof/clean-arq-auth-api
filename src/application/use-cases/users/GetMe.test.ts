@@ -4,13 +4,12 @@ import { faker } from '@faker-js/faker'
 import { GetMe } from './GetMe'
 import { mockAuthRepository } from '@/ports/AuthRepository.mocks'
 
-const accessToken =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQGVtYWlsLmNvbSIsImlhdCI6MTY4MTA0NTIwMDAwMCwiZXhwIjoxOTk2NDA1MjAwMDAwfQ.NSHEzWBPUXM6qvw48k7PpijBx8iv-epyXZneCeIuJm4'
+const email = faker.internet.email()
 
 it('returns the user information with the basic information (only email)', async () => {
   const authRepository = mockAuthRepository()
   const getMe = new GetMe(authRepository)
-  const user = await getMe.execute({ accessToken })
+  const user = await getMe.execute({ email })
   expect(user).toEqual(
     expect.objectContaining({
       email: expect.any(String),
@@ -26,7 +25,7 @@ it('returns the user complete information (email, name, profilePictureUrl)', asy
       ),
   })
   const getMe = new GetMe(authRepository)
-  const user = await getMe.execute({ accessToken })
+  const user = await getMe.execute({ email })
   expect(user).toEqual(
     expect.objectContaining({
       email: expect.any(String),

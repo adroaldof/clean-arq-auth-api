@@ -7,13 +7,11 @@ export class GetMe {
   constructor(readonly authRepository: AuthRepository) {}
 
   async execute(input: Input): Promise<AuthOutput | null> {
-    const tokenGenerator = new TokenGenerator(config.token.signKey)
-    const decodedToken = tokenGenerator.verify(input.accessToken)
-    const authUser = await this.authRepository.get(decodedToken.email)
+    const authUser = await this.authRepository.get(input.email)
     return authUser ? authUser.toString() : null
   }
 }
 
 type Input = {
-  accessToken: string
+  email: string
 }
