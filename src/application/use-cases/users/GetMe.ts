@@ -6,11 +6,11 @@ export class GetMe implements UseCase {
   constructor(readonly authRepository: AuthRepository) {}
 
   async execute(input: Input): Promise<AuthOutput | null> {
-    const authUser = await this.authRepository.get(input.email)
+    const authUser = await this.authRepository.get(input.userEmail)
     return authUser ? authUser.toString() : null
   }
 }
 
 type Input = {
-  email: string
+  userEmail: string
 }
