@@ -2,9 +2,12 @@ name: Build and test the application
 
 on:
   push:
-    branches: [main, add-ci]
+    branches:
+      - main
+      - add-ci
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   running-tests:
@@ -27,7 +30,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: yarn
+        run: yarn install
 
       - name: Run tests
         run: yarn test
