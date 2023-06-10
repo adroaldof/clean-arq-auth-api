@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - add-ci
   pull_request:
     branches:
       - main
@@ -26,14 +25,14 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository code
         uses: actions/checkout@v3
 
-      - name: Install dependencies
+      - name: Install NPM dependencies
         run: yarn install
 
-      - name: Run tests
-        run: yarn test
+      - name: Run coverage tests
+        run: yarn coverage
         env:
           POSTGRES_HOST: postgres
           POSTGRES_PORT: 5432
