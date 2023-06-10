@@ -1,5 +1,6 @@
 import supertest, { SuperTest, Test } from 'supertest'
 import { AuthController } from './AuthController'
+import { AuthDecorator } from '@/decorators/AuthDecorator'
 import { AuthRepositoryDatabase } from '@/repositories/AuthRepositoryDatabase'
 import { describe, expect, it } from 'vitest'
 import { ExpressHttpServer } from '@/http/ExpressHttpServer'
@@ -26,13 +27,13 @@ const verifyToken = new VerifyToken()
 const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(refreshTokenRepository, authRepository)
 new AuthController(httpServer, signUp, signIn, verifyToken, generateAuthTokenFromRefreshToken)
 
-const getMe = new GetMe(authRepository)
+const getMe = new AuthDecorator(new GetMe(authRepository))
 new UsersController(httpServer, getMe)
 
 const request: SuperTest<Test> = supertest(httpServer.server)
 
 describe('POST /api/users/me', () => {
-  it('returns `200 OK` when with the user', async () => {
+  it('returns `200 OK` when user is authenticated', async () => {
     const input = {
       email: faker.internet.email(),
       password: faker.internet.password(),
@@ -65,6 +66,6 @@ describe('POST /api/users/me', () => {
       .get('/api/users/me')
       .set({ Authorization: `Bearer ${String(authenticated.accessToken).slice(5)}` })
       .expect(StatusCodes.UNPROCESSABLE_ENTITY)
-    expect(output.message).toEqual('invalid token')
+    expect(output.message).toEqual('not authenticated')
   })
 })
