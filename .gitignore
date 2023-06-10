@@ -23,6 +23,7 @@ postgres/
 !.editorconfig
 !.eslintrc.js
 !.gitattributes
+!.github
 !.gitignore
 !.nvmrc
 !.prettierrc
