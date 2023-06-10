@@ -26,6 +26,7 @@ export default defineConfig({
       '@/controllers': path.resolve(__dirname, './src/infra/controllers'),
       '@/database': path.resolve(__dirname, './src/infra/database'),
       '@/http': path.resolve(__dirname, './src/infra/http'),
+      '@/logger': path.resolve(__dirname, './src/infra/logger'),
       '@/repositories': path.resolve(__dirname, './src/infra/repositories'),
       '@/config': path.resolve(__dirname, './src/config'),
       '@/': path.resolve(__dirname, './src'),
