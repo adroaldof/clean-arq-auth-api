@@ -1,6 +1,7 @@
 import cors from 'cors'
 import express, { Request, Response } from 'express'
 import { CallbackFunction, HttpServer, NextCallbackFunction } from './HttpServer'
+import { logger } from '@/logger/winston'
 import { StatusCodes } from 'http-status-codes'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -34,7 +35,7 @@ export class ExpressHttpServer implements HttpServer {
 
   /* c8 ignore start */
   listen(port: number): void {
-    this.server.listen(port, () => console.info(`** Server listening on http://localhost:${port}/api`))
+    this.server.listen(port, () => logger.info(`Server listening on http://localhost:${port}/api`))
   }
   /* c8 ignore stop */
 }
