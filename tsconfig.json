@@ -19,6 +19,7 @@
       "@/controllers/*": ["./src/infra/controllers/*"],
       "@/database/*": ["./src/infra/database/*"],
       "@/http/*": ["./src/infra/http/*"],
+      "@/logger/*": ["./src/infra/logger/*"],
       "@/repositories/*": ["./src/infra/repositories/*"],
       "@/*": ["./src/*"]
     }

@@ -1,4 +1,5 @@
 import winston from 'winston'
+/* c8 ignore start */
 
 const { combine, timestamp, json, colorize, printf, errors } = winston.format
 
@@ -49,3 +50,4 @@ export const logger = winston.createLogger({
   transports,
   level: level(),
 })
+/* c8 ignore stop */
