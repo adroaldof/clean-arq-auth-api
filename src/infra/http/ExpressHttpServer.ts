@@ -1,6 +1,7 @@
 import cors from 'cors'
 import express, { Request, Response } from 'express'
 import { CallbackFunction, HttpServer, NextCallbackFunction } from './HttpServer'
+import { httpLogger } from '@/logger/morgan'
 import { logger } from '@/logger/winston'
 import { StatusCodes } from 'http-status-codes'
 
@@ -12,6 +13,7 @@ export class ExpressHttpServer implements HttpServer {
     this.server = express()
     this.server.use(express.json())
     this.server.use(cors())
+    this.server.use(httpLogger)
   }
 
   on(method: string, url: string, callback: CallbackFunction, ...middlewares: NextCallbackFunction[]): void {
