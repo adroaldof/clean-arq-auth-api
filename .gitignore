@@ -28,6 +28,12 @@ postgres/
 !.nvmrc
 !.prettierrc
 !.vscode
+
+###############################################################################
+# Handles Yarn Package Manager
+###############################################################################
+
+!.yarn
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
