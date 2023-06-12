@@ -58,12 +58,11 @@ Some features will become available as the project evolves. The following list s
 - [x] Sign Out
 - [x] Verify Token
 - [x] Refresh Token
-- [ ] Forgot Password
 - [ ] Reset Password
 - [ ] Update User
 - [ ] Delete User (soft)
 - [x] Get Me
-- [ ] List Users
+- [x] List Users
 - [ ] Detail User
 
 Disclaimer: This is not a production ready project so use it to study and get some ideas. Also, there are good ways to implement authentication and authorization in your project using the well know services as [Auth0](https://auth0.com), [AWS Cognito](https://aws.amazon.com/cognito/), [Okta](https://www.okta.com/products/authentication/) and other SASS services that have their business dedicated to manage users
