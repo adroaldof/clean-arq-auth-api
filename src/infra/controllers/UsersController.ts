@@ -5,7 +5,7 @@ import { validateSchemaMiddleware } from '@/http/validate-schema-middleware'
 import { z } from 'zod'
 
 export class UsersController {
-  constructor(readonly httpServer: HttpServer, readonly getMe: UseCase) {
+  constructor(readonly httpServer: HttpServer, readonly getMe: UseCase, readonly listUsers: UseCase) {
     this.httpServer.on(
       'get',
       '/api/users/me',
@@ -14,12 +14,23 @@ export class UsersController {
         const output = await this.getMe.execute({ authorization })
         return { output }
       },
-      validateSchemaMiddleware(getMeSchema),
+      validateSchemaMiddleware(authorizedSchema),
+    )
+
+    this.httpServer.on(
+      'get',
+      '/api/users',
+      async (req: Request) => {
+        const { authorization } = req.headers
+        const output = await this.listUsers.execute({ authorization })
+        return { output }
+      },
+      validateSchemaMiddleware(authorizedSchema),
     )
   }
 }
 
-const getMeSchema = z.object({
+const authorizedSchema = z.object({
   headers: z.object({
     authorization: z.string({ required_error: 'authorization header is required' }),
   }),

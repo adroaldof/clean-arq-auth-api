@@ -6,6 +6,7 @@ import { ExpressHttpServer } from './infra/http/ExpressHttpServer'
 import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken'
 import { GetMe } from '@/use-cases/users/GetMe'
 import { KnexAdapter } from '@/database/KnexAdapter'
+import { ListUsers } from '@/use-cases/users/ListUsers'
 import { RefreshTokenRepositoryDatabase } from '@/repositories/RefreshTokenRepositoryDatabase'
 import { RootController } from './infra/controllers/RootController'
 import { SignIn } from '@/use-cases/auth/SignIn'
@@ -29,6 +30,7 @@ const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(
 new AuthController(httpServer, signUp, signIn, verifyToken, generateAuthTokenFromRefreshToken)
 
 const getMe = new AuthDecorator(new GetMe(authRepository))
-new UsersController(httpServer, getMe)
+const listUsers = new AuthDecorator(new ListUsers(authRepository))
+new UsersController(httpServer, getMe, listUsers)
 
 httpServer.listen(config.server.port)
