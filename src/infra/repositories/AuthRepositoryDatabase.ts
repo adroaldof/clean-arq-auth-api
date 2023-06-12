@@ -1,10 +1,16 @@
-import { Auth } from '@/entities/auth/Auth'
 import { AuthRepository } from '@/ports/AuthRepository'
 import { Connection } from '@/database/Connection'
 import { tableNames } from '@/database/table-names.mjs'
+import { Auth } from '@/entities/auth/Auth'
 
 export class AuthRepositoryDatabase implements AuthRepository {
   constructor(readonly connection: Connection) {}
+
+  async list(): Promise<Auth[]> {
+    const databaseOutput = await this.connection.connection(tableNames.auth)
+    if (!databaseOutput) []
+    return Promise.all(databaseOutput.map(fromDatabaseOutputToAuth))
+  }
 
   async get(email: string): Promise<Auth> {
     const [databaseOutput] = await this.connection.connection(tableNames.auth).where({ email })
