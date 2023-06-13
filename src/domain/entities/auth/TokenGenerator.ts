@@ -1,6 +1,6 @@
 import jwt, { Algorithm, JwtPayload, SignOptions } from 'jsonwebtoken'
-import { Auth } from './Auth'
 import { randomUUID } from 'crypto'
+import { User } from './User'
 
 const ALGORITHM: Algorithm = 'HS512'
 const EXPIRES_IN = 15 * 1000 // 15 seconds
@@ -20,7 +20,7 @@ const options: SignOptions = { algorithm: ALGORITHM }
 export class TokenGenerator {
   constructor(readonly secretOrPrivateKey: string) {}
 
-  generateAuthToken(user: Auth, issueDate: Date = new Date(), expiresIn: number = EXPIRES_IN): string {
+  generateAuthToken(user: User, issueDate: Date = new Date(), expiresIn: number = EXPIRES_IN): string {
     const iat = issueDate.getTime()
     const exp = iat + expiresIn
     const payload: Token = { email: user.email.getValue(), iat, exp }

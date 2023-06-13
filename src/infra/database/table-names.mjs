@@ -1,4 +1,4 @@
 export const tableNames = {
-  auth: 'auth',
+  users: 'users',
   refreshToken: 'refresh_token',
 }

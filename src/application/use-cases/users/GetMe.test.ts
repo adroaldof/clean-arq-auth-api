@@ -1,17 +1,17 @@
-import { Auth } from '@/entities/auth/Auth'
 import { AuthDecorator } from '@/decorators/AuthDecorator'
 import { config } from '@/config'
 import { expect, it } from 'vitest'
 import { faker } from '@faker-js/faker'
 import { GetMe } from './GetMe'
-import { mockAuthRepository } from '@/ports/AuthRepository.mocks'
+import { mockUserRepository } from '@/ports/UserRepository.mocks'
 import { TokenGenerator } from '@/entities/auth/TokenGenerator'
+import { User } from '@/entities/auth/User'
 
 const userEmail = faker.internet.email()
 
 it('returns the user information with the basic information (only email)', async () => {
-  const authRepository = mockAuthRepository()
-  const getMe = new GetMe(authRepository)
+  const usersRepository = mockUserRepository()
+  const getMe = new GetMe(usersRepository)
   const user = await getMe.execute({ userEmail })
   expect(user).toEqual(
     expect.objectContaining({
@@ -21,17 +21,17 @@ it('returns the user information with the basic information (only email)', async
 })
 
 it('returns null when user is not found', async () => {
-  const authRepository = mockAuthRepository({ get: async () => Promise.resolve(null) })
-  const getMe = new GetMe(authRepository)
+  const usersRepository = mockUserRepository({ get: async () => Promise.resolve(null) })
+  const getMe = new GetMe(usersRepository)
   const user = await getMe.execute({ userEmail })
   expect(user).toBeNull()
 })
 
 it('returns the user information only when authenticated', async () => {
-  const authRepository = mockAuthRepository()
-  const getMe = new GetMe(authRepository)
+  const usersRepository = mockUserRepository()
+  const getMe = new GetMe(usersRepository)
   const authenticatedGetMe = new AuthDecorator(getMe)
-  const mockedUser = await Auth.create(userEmail, faker.internet.password())
+  const mockedUser = await User.create(userEmail, faker.internet.password())
   const tokenGenerator = new TokenGenerator(config.token.signKey)
   const accessToken = tokenGenerator.generateAuthToken(mockedUser)
   const user = await authenticatedGetMe.execute({ authorization: `Bearer ${accessToken}` })
@@ -43,20 +43,20 @@ it('returns the user information only when authenticated', async () => {
 })
 
 it('throws `not authenticated` when no passing a token in the input', async () => {
-  const authRepository = mockAuthRepository()
-  const getMe = new GetMe(authRepository)
+  const usersRepository = mockUserRepository()
+  const getMe = new GetMe(usersRepository)
   const authenticatedGetMe = new AuthDecorator(getMe)
   expect(() => authenticatedGetMe.execute({ userEmail })).rejects.toThrow('not authenticated')
 })
 
 it('returns the user complete information (email, name, profilePictureUrl)', async () => {
-  const authRepository = mockAuthRepository({
+  const usersRepository = mockUserRepository({
     get: async () =>
       Promise.resolve(
-        Auth.create(faker.internet.email(), faker.internet.password(), faker.name.fullName(), faker.image.imageUrl()),
+        User.create(faker.internet.email(), faker.internet.password(), faker.name.fullName(), faker.image.imageUrl()),
       ),
   })
-  const getMe = new GetMe(authRepository)
+  const getMe = new GetMe(usersRepository)
   const user = await getMe.execute({ userEmail })
   expect(user).toEqual(
     expect.objectContaining({

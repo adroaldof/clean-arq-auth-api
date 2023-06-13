@@ -1,30 +1,30 @@
-import { AuthRepository } from '@/ports/AuthRepository'
 import { Connection } from '@/database/Connection'
 import { tableNames } from '@/database/table-names.mjs'
-import { Auth } from '@/entities/auth/Auth'
+import { User } from '@/entities/auth/User'
+import { UserRepository } from '@/ports/UserRepository'
 
-export class AuthRepositoryDatabase implements AuthRepository {
+export class UserRepositoryDatabase implements UserRepository {
   constructor(readonly connection: Connection) {}
 
-  async list(): Promise<Auth[]> {
-    const databaseOutput = await this.connection.connection(tableNames.auth)
+  async list(): Promise<User[]> {
+    const databaseOutput = await this.connection.connection(tableNames.users)
     if (!databaseOutput) []
     return Promise.all(databaseOutput.map(fromDatabaseOutputToAuth))
   }
 
-  async get(email: string): Promise<Auth> {
-    const [databaseOutput] = await this.connection.connection(tableNames.auth).where({ email })
+  async get(email: string): Promise<User> {
+    const [databaseOutput] = await this.connection.connection(tableNames.users).where({ email })
     if (!databaseOutput) throw new Error('invalid email or password')
     return fromDatabaseOutputToAuth(databaseOutput)
   }
 
-  async save(auth: Auth): Promise<void> {
-    await this.connection.connection(tableNames.auth).insert(fromAuthToDatabaseInput(auth))
+  async save(auth: User): Promise<void> {
+    await this.connection.connection(tableNames.users).insert(fromAuthToDatabaseInput(auth))
   }
 }
 
-const fromDatabaseOutputToAuth = async (databaseOutput: any): Promise<Auth> => {
-  return Auth.buildExistingAuthUser(
+const fromDatabaseOutputToAuth = async (databaseOutput: any): Promise<User> => {
+  return User.hydrateUser(
     databaseOutput.email,
     databaseOutput.password,
     databaseOutput.salt,
@@ -33,7 +33,7 @@ const fromDatabaseOutputToAuth = async (databaseOutput: any): Promise<Auth> => {
   )
 }
 
-const fromAuthToDatabaseInput = (auth: Auth): any => {
+const fromAuthToDatabaseInput = (auth: User): any => {
   return {
     email: auth.getEmail().getValue(),
     password: auth.getPassword().getValue(),

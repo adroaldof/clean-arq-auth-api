@@ -2,7 +2,7 @@ import { Email } from './Email'
 import { Password } from './Password'
 
 // Entity - Aggregate
-export class Auth {
+export class User {
   name?: string
   profilePictureUrl?: string
 
@@ -13,22 +13,22 @@ export class Auth {
   }
 
   // Factory method
-  static async create(email: string, password: string, name?: string, profilePictureUrl?: string): Promise<Auth> {
+  static async create(email: string, password: string, name?: string, profilePictureUrl?: string): Promise<User> {
     const emailInstance = new Email(email)
     const derivedPassword = await Password.create(password)
-    return new Auth(emailInstance, derivedPassword, name, profilePictureUrl)
+    return new User(emailInstance, derivedPassword, name, profilePictureUrl)
   }
 
-  static async buildExistingAuthUser(
+  static async hydrateUser(
     email: string,
     password: string,
     salt: string,
     name?: string,
     profilePictureUrl?: string,
-  ): Promise<Auth> {
+  ): Promise<User> {
     const emailInstance = new Email(email)
     const derivedPassword = new Password(password, salt)
-    return new Auth(emailInstance, derivedPassword, name, profilePictureUrl)
+    return new User(emailInstance, derivedPassword, name, profilePictureUrl)
   }
 
   async isValidPassword(password: string): Promise<boolean> {
@@ -60,7 +60,7 @@ export class Auth {
   }
 }
 
-export type AuthOutput = {
+export type UserOutput = {
   email: string
   name?: string
   profilePictureUrl?: string

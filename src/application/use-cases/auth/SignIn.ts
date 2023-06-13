@@ -1,16 +1,16 @@
-import { Auth } from '@/entities/auth/Auth'
-import { AuthRepository } from '@/ports/AuthRepository'
 import { config } from '@/config'
 import { RefreshTokenRepository } from '@/ports/RefreshTokenRepository'
 import { TokenGenerator } from '@/entities/auth/TokenGenerator'
+import { User } from '@/entities/auth/User'
+import { UserRepository } from '@/ports/UserRepository'
 
 export class SignIn {
-  constructor(readonly authRepository: AuthRepository, readonly refreshTokenRepository: RefreshTokenRepository) {}
+  constructor(readonly usersRepository: UserRepository, readonly refreshTokenRepository: RefreshTokenRepository) {}
 
   async execute(input: SignInInput): Promise<SignInOutput> {
-    const authUser = await this.authRepository.get(input.email)
+    const authUser = await this.usersRepository.get(input.email)
     if (!authUser) throw new Error('invalid email or password')
-    const hydratedUser = await Auth.buildExistingAuthUser(
+    const hydratedUser = await User.hydrateUser(
       authUser.getEmail().getValue(),
       authUser.password.getValue(),
       authUser.password.getSalt(),

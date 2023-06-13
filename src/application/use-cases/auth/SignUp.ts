@@ -1,12 +1,12 @@
-import { Auth } from '@/entities/auth/Auth'
-import { AuthRepository } from '@/ports/AuthRepository'
+import { User } from '@/entities/auth/User'
+import { UserRepository } from '@/ports/UserRepository'
 
 export class SignUp {
-  constructor(readonly authRepository: AuthRepository) {}
+  constructor(readonly usersRepository: UserRepository) {}
 
   async execute(input: SignUpInput): Promise<void> {
-    const auth = await Auth.create(input.email, input.password, input.name, input.profilePictureUrl)
-    return this.authRepository.save(auth)
+    const auth = await User.create(input.email, input.password, input.name, input.profilePictureUrl)
+    return this.usersRepository.save(auth)
   }
 }
 

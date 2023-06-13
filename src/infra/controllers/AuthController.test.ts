@@ -1,6 +1,5 @@
 import supertest, { SuperTest, Test } from 'supertest'
 import { AuthController } from './AuthController'
-import { AuthRepositoryDatabase } from '@/repositories/AuthRepositoryDatabase'
 import { describe, expect, it } from 'vitest'
 import { ExpressHttpServer } from '@/http/ExpressHttpServer'
 import { faker } from '@faker-js/faker'
@@ -11,17 +10,18 @@ import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '@/use-cases/auth/SignUp'
 import { StatusCodes } from 'http-status-codes'
 import { tableNames } from '@/database/table-names.mjs'
+import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase'
 import { VerifyToken } from '@/use-cases/auth/VerifyToken'
 
 const httpServer = new ExpressHttpServer()
 const connection = new KnexAdapter()
 
-const authRepository = new AuthRepositoryDatabase(connection)
+const usersRepository = new UserRepositoryDatabase(connection)
 const refreshTokenRepository = new RefreshTokenRepositoryDatabase(connection)
-const signUp = new SignUp(authRepository)
-const signIn = new SignIn(authRepository, refreshTokenRepository)
+const signUp = new SignUp(usersRepository)
+const signIn = new SignIn(usersRepository, refreshTokenRepository)
 const verifyToken = new VerifyToken()
-const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(refreshTokenRepository, authRepository)
+const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(refreshTokenRepository, usersRepository)
 new AuthController(httpServer, signUp, signIn, verifyToken, generateAuthTokenFromRefreshToken)
 
 const request: SuperTest<Test> = supertest(httpServer.server)
@@ -31,7 +31,7 @@ describe('POST /api/auth/sign-up', () => {
     const input = { email: faker.internet.email(), password: faker.internet.password() }
     const { body } = await request.post('/api/auth/sign-up').send(input).expect(StatusCodes.ACCEPTED)
     expect(Object.keys(body)).toHaveLength(0)
-    const createdAuthUser = await connection.connection(tableNames.auth).where({ email: input.email }).first()
+    const createdAuthUser = await connection.connection(tableNames.users).where({ email: input.email }).first()
     expect(createdAuthUser.email).toEqual(input.email)
   })
 

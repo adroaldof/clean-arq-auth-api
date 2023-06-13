@@ -1,6 +1,5 @@
 import { AuthController } from '@/infra/controllers/AuthController'
 import { AuthDecorator } from '@/decorators/AuthDecorator'
-import { AuthRepositoryDatabase } from '@/infra/repositories/AuthRepositoryDatabase'
 import { config } from './config'
 import { ExpressHttpServer } from './infra/http/ExpressHttpServer'
 import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken'
@@ -11,6 +10,7 @@ import { RefreshTokenRepositoryDatabase } from '@/repositories/RefreshTokenRepos
 import { RootController } from './infra/controllers/RootController'
 import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '@/use-cases/auth/SignUp'
+import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase'
 import { UsersController } from '@/controllers/UsersController'
 import { VerifyToken } from '@/use-cases/auth/VerifyToken'
 
@@ -21,16 +21,16 @@ const httpServer = new ExpressHttpServer()
 
 new RootController(httpServer)
 
-const authRepository = new AuthRepositoryDatabase(connection)
+const usersRepository = new UserRepositoryDatabase(connection)
 const refreshTokenRepository = new RefreshTokenRepositoryDatabase(connection)
-const signUp = new SignUp(authRepository)
-const signIn = new SignIn(authRepository, refreshTokenRepository)
+const signUp = new SignUp(usersRepository)
+const signIn = new SignIn(usersRepository, refreshTokenRepository)
 const verifyToken = new VerifyToken()
-const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(refreshTokenRepository, authRepository)
+const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(refreshTokenRepository, usersRepository)
 new AuthController(httpServer, signUp, signIn, verifyToken, generateAuthTokenFromRefreshToken)
 
-const getMe = new AuthDecorator(new GetMe(authRepository))
-const listUsers = new AuthDecorator(new ListUsers(authRepository))
+const getMe = new AuthDecorator(new GetMe(usersRepository))
+const listUsers = new AuthDecorator(new ListUsers(usersRepository))
 new UsersController(httpServer, getMe, listUsers)
 
 httpServer.listen(config.server.port)

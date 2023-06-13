@@ -1,7 +1,7 @@
-import { Auth } from './Auth';
-import { beforeEach, expect, it } from 'vitest';
-import { faker } from '@faker-js/faker';
-import { TokenGenerator } from './TokenGenerator';
+import { beforeEach, expect, it } from 'vitest'
+import { faker } from '@faker-js/faker'
+import { TokenGenerator } from './TokenGenerator'
+import { User } from './User'
 
 const secretOrPrivateKey = 'key'
 const expiresIn = 60 * 60 * 24 * 365 * 10 * 1000 // 10 years for test purpose only (seconds * minutes * hours * days * years * multiplier)
@@ -12,10 +12,10 @@ const authPayload = {
   password: 'abc123',
 }
 
-let authUser: Auth
+let authUser: User
 
 beforeEach(async () => {
-  authUser = await Auth.create(authPayload.email, authPayload.password)
+  authUser = await User.create(authPayload.email, authPayload.password)
 })
 
 it('generates a new token for an user', async () => {

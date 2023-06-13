@@ -1,8 +1,6 @@
 import supertest, { SuperTest, Test } from 'supertest'
 import { AuthController } from './AuthController'
 import { AuthDecorator } from '@/decorators/AuthDecorator'
-import { AuthOutput } from '@/entities/auth/Auth'
-import { AuthRepositoryDatabase } from '@/repositories/AuthRepositoryDatabase'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { ExpressHttpServer } from '@/http/ExpressHttpServer'
 import { faker } from '@faker-js/faker'
@@ -15,6 +13,8 @@ import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '@/use-cases/auth/SignUp'
 import { StatusCodes } from 'http-status-codes'
 import { tableNames } from '@/database/table-names.mjs'
+import { UserOutput } from '@/entities/auth/User'
+import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase'
 import { UsersController } from './UsersController'
 import { VerifyToken } from '@/use-cases/auth/VerifyToken'
 
@@ -22,16 +22,16 @@ const connection = new KnexAdapter()
 
 const httpServer = new ExpressHttpServer()
 
-const authRepository = new AuthRepositoryDatabase(connection)
+const usersRepository = new UserRepositoryDatabase(connection)
 const refreshTokenRepository = new RefreshTokenRepositoryDatabase(connection)
-const signUp = new SignUp(authRepository)
-const signIn = new SignIn(authRepository, refreshTokenRepository)
+const signUp = new SignUp(usersRepository)
+const signIn = new SignIn(usersRepository, refreshTokenRepository)
 const verifyToken = new VerifyToken()
-const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(refreshTokenRepository, authRepository)
+const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(refreshTokenRepository, usersRepository)
 new AuthController(httpServer, signUp, signIn, verifyToken, generateAuthTokenFromRefreshToken)
 
-const getMe = new AuthDecorator(new GetMe(authRepository))
-const listUsers = new AuthDecorator(new ListUsers(authRepository))
+const getMe = new AuthDecorator(new GetMe(usersRepository))
+const listUsers = new AuthDecorator(new ListUsers(usersRepository))
 new UsersController(httpServer, getMe, listUsers)
 
 const request: SuperTest<Test> = supertest(httpServer.server)
@@ -74,7 +74,7 @@ describe('POST /api/users', () => {
       email: faker.internet.email(),
       password: faker.internet.password(),
     }
-    const notInDatabase = await connection.connection(tableNames.auth).where({ email: input.email }).first()
+    const notInDatabase = await connection.connection(tableNames.users).where({ email: input.email }).first()
     expect(notInDatabase).toBeUndefined()
     await request.post('/api/auth/sign-up').send(input).expect(StatusCodes.ACCEPTED)
     const { body: authenticated } = await request.post('/api/auth/sign-in').send(input).expect(StatusCodes.OK)
@@ -82,7 +82,7 @@ describe('POST /api/users', () => {
       .get('/api/users')
       .set({ Authorization: `Bearer ${authenticated.accessToken}` })
       .expect(StatusCodes.OK)
-    expect(output.filter(({ email }: AuthOutput) => email === input.email)).toHaveLength(1)
+    expect(output.filter(({ email }: UserOutput) => email === input.email)).toHaveLength(1)
   })
 
   it('returns `422 Unprocessable Entity` with `invalid token` message when remove part of token', async () => {

@@ -1,10 +1,9 @@
-import { Auth } from '@/entities/auth/Auth'
 import { config } from '@/config'
 import { expect, it, vi } from 'vitest'
 import { faker } from '@faker-js/faker'
 import { GenerateAuthTokenFromRefreshToken } from './GenerateTokenFromRefreshToken'
-import { mockAuthRepository } from '@/ports/AuthRepository.mocks'
 import { mockRefreshTokenRepository } from '@/ports/RefreshTokenRepository.mocks'
+import { mockUserRepository } from '@/ports/UserRepository.mocks'
 import { TokenGenerator } from '@/entities/auth/TokenGenerator'
 
 const user = {
@@ -16,12 +15,12 @@ it('returns a new authentication token from a refresh token', async () => {
   const refreshTokenRepository = mockRefreshTokenRepository({
     get: () => Promise.resolve({ uuid: faker.datatype.uuid(), userEmail: user.email, expiresAt: new Date() }),
   })
-  const authRepository = mockAuthRepository()
-  const getAuthSpy = vi.spyOn(authRepository, 'get')
+  const usersRepository = mockUserRepository()
+  const getAuthSpy = vi.spyOn(usersRepository, 'get')
   const getRefreshTokenSpy = vi.spyOn(refreshTokenRepository, 'get')
   const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(
     refreshTokenRepository,
-    authRepository,
+    usersRepository,
   )
   const tokenGenerator = new TokenGenerator(config.token.signKey)
   const { refreshToken } = tokenGenerator.generateRefreshToken()
@@ -37,10 +36,10 @@ it('returns a new authentication token from a refresh token', async () => {
 
 it('returns `invalid refresh token error` when the refresh token is not found', async () => {
   const refreshTokenRepository = mockRefreshTokenRepository()
-  const authRepository = mockAuthRepository()
+  const usersRepository = mockUserRepository()
   const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(
     refreshTokenRepository,
-    authRepository,
+    usersRepository,
   )
   const tokenGenerator = new TokenGenerator(config.token.signKey)
   const { refreshToken } = tokenGenerator.generateRefreshToken()
@@ -53,12 +52,12 @@ it('returns `invalid refresh token error` when refresh token user is not found',
   const refreshTokenRepository = mockRefreshTokenRepository({
     get: () => Promise.resolve({ uuid: faker.datatype.uuid(), userEmail: user.email, expiresAt: new Date() }),
   })
-  const authRepository = mockAuthRepository({
+  const usersRepository = mockUserRepository({
     get: () => Promise.resolve(null),
   })
   const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(
     refreshTokenRepository,
-    authRepository,
+    usersRepository,
   )
   const tokenGenerator = new TokenGenerator(config.token.signKey)
   const { refreshToken } = tokenGenerator.generateRefreshToken()
