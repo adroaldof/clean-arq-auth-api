@@ -1,6 +1,6 @@
-import { UseCase } from '../UseCase'
-import { UserOutput } from '@/entities/auth/User'
-import { UserRepository } from '@/ports/UserRepository'
+import { UseCase } from '../UseCase';
+import { UserOutput } from '@/entities/user/User';
+import { UserRepository } from '@/ports/UserRepository';
 
 export class GetMe implements UseCase {
   constructor(readonly usersRepository: UserRepository) {}

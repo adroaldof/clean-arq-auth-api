@@ -1,5 +1,5 @@
 import { config } from '@/config';
-import { TokenGenerator } from '@/entities/auth/TokenGenerator';
+import { TokenGenerator } from '@/entities/token/TokenGenerator';
 import { UseCase } from '@/use-cases/UseCase';
 
 export class AuthDecorator implements UseCase {

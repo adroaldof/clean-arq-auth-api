@@ -1,7 +1,7 @@
-import { Connection } from '@/database/Connection'
-import { tableNames } from '@/database/table-names.mjs'
-import { User } from '@/entities/auth/User'
-import { UserRepository } from '@/ports/UserRepository'
+import { Connection } from '@/database/Connection';
+import { tableNames } from '@/database/table-names.mjs';
+import { User } from '@/entities/user/User';
+import { UserRepository } from '@/ports/UserRepository';
 
 export class UserRepositoryDatabase implements UserRepository {
   constructor(readonly connection: Connection) {}

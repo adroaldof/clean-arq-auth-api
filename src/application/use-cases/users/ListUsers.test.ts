@@ -1,8 +1,8 @@
-import { expect, it } from 'vitest'
-import { faker } from '@faker-js/faker'
-import { ListUsers } from './ListUsers'
-import { mockUserRepository } from '@/ports/UserRepository.mocks'
-import { User } from '@/entities/auth/User'
+import { expect, it } from 'vitest';
+import { faker } from '@faker-js/faker';
+import { ListUsers } from './ListUsers';
+import { mockUserRepository } from '@/ports/UserRepository.mocks';
+import { User } from '@/entities/user/User';
 
 it('returns an empty list when no users are found in database', async () => {
   const usersRepository = mockUserRepository()

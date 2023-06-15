@@ -1,22 +1,27 @@
-import supertest, { SuperTest, Test } from 'supertest'
-import { AuthController } from './AuthController'
-import { AuthDecorator } from '@/decorators/AuthDecorator'
-import { beforeEach, describe, expect, it } from 'vitest'
-import { ExpressHttpServer } from '@/http/ExpressHttpServer'
-import { faker } from '@faker-js/faker'
-import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken'
-import { GetMe } from '@/use-cases/users/GetMe'
-import { KnexAdapter } from '@/database/KnexAdapter'
-import { ListUsers } from '@/use-cases/users/ListUsers'
-import { RefreshTokenRepositoryDatabase } from '@/repositories/RefreshTokenRepositoryDatabase'
-import { SignIn } from '@/use-cases/auth/SignIn'
-import { SignUp } from '@/use-cases/auth/SignUp'
-import { StatusCodes } from 'http-status-codes'
-import { tableNames } from '@/database/table-names.mjs'
-import { UserOutput } from '@/entities/auth/User'
-import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase'
-import { UsersController } from './UsersController'
-import { VerifyToken } from '@/use-cases/auth/VerifyToken'
+import supertest, { SuperTest, Test } from 'supertest';
+import { AuthController } from './AuthController';
+import { AuthDecorator } from '@/decorators/AuthDecorator';
+import {
+  beforeEach,
+  describe,
+  expect,
+  it
+  } from 'vitest';
+import { ExpressHttpServer } from '@/http/ExpressHttpServer';
+import { faker } from '@faker-js/faker';
+import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken';
+import { GetMe } from '@/use-cases/users/GetMe';
+import { KnexAdapter } from '@/database/KnexAdapter';
+import { ListUsers } from '@/use-cases/users/ListUsers';
+import { RefreshTokenRepositoryDatabase } from '@/repositories/RefreshTokenRepositoryDatabase';
+import { SignIn } from '@/use-cases/auth/SignIn';
+import { SignUp } from '@/use-cases/auth/SignUp';
+import { StatusCodes } from 'http-status-codes';
+import { tableNames } from '@/database/table-names.mjs';
+import { UserOutput } from '@/entities/user/User';
+import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase';
+import { UsersController } from './UsersController';
+import { VerifyToken } from '@/use-cases/auth/VerifyToken';
 
 const connection = new KnexAdapter()
 

@@ -1,6 +1,6 @@
 import { config } from '@/config';
 import { JwtPayload } from 'jsonwebtoken';
-import { TokenGenerator } from '@/entities/auth/TokenGenerator';
+import { TokenGenerator } from '@/entities/token/TokenGenerator';
 
 export class VerifyToken {
   async execute(input: VerifyTokenInput): Promise<JwtPayload | string> {

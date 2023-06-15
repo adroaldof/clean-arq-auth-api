@@ -1,4 +1,4 @@
-import { User } from '@/entities/auth/User'
+import { User } from '@/entities/user/User';
 
 export interface UserRepository {
   save(auth: User): Promise<void>

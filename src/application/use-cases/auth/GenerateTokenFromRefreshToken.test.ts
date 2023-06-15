@@ -1,10 +1,10 @@
-import { config } from '@/config'
-import { expect, it, vi } from 'vitest'
-import { faker } from '@faker-js/faker'
-import { GenerateAuthTokenFromRefreshToken } from './GenerateTokenFromRefreshToken'
-import { mockRefreshTokenRepository } from '@/ports/RefreshTokenRepository.mocks'
-import { mockUserRepository } from '@/ports/UserRepository.mocks'
-import { TokenGenerator } from '@/entities/auth/TokenGenerator'
+import { config } from '@/config';
+import { expect, it, vi } from 'vitest';
+import { faker } from '@faker-js/faker';
+import { GenerateAuthTokenFromRefreshToken } from './GenerateTokenFromRefreshToken';
+import { mockRefreshTokenRepository } from '@/ports/RefreshTokenRepository.mocks';
+import { mockUserRepository } from '@/ports/UserRepository.mocks';
+import { TokenGenerator } from '@/entities/token/TokenGenerator';
 
 const user = {
   email: 'john.doe@email.com',

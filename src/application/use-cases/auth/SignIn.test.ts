@@ -1,8 +1,8 @@
-import { expect, it, vi } from 'vitest'
-import { mockRefreshTokenRepository } from '@/ports/RefreshTokenRepository.mocks'
-import { mockUserRepository } from '@/ports/UserRepository.mocks'
-import { SignIn } from './SignIn'
-import { User } from '@/entities/auth/User'
+import { expect, it, vi } from 'vitest';
+import { mockRefreshTokenRepository } from '@/ports/RefreshTokenRepository.mocks';
+import { mockUserRepository } from '@/ports/UserRepository.mocks';
+import { SignIn } from './SignIn';
+import { User } from '@/entities/user/User';
 
 const payload = {
   email: 'john.doe@email.com',

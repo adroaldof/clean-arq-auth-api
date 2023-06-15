@@ -1,8 +1,8 @@
-import { config } from '@/config'
-import { RefreshTokenRepository } from '@/ports/RefreshTokenRepository'
-import { TokenGenerator } from '@/entities/auth/TokenGenerator'
-import { User } from '@/entities/auth/User'
-import { UserRepository } from '@/ports/UserRepository'
+import { config } from '@/config';
+import { RefreshTokenRepository } from '@/ports/RefreshTokenRepository';
+import { TokenGenerator } from '@/entities/token/TokenGenerator';
+import { User } from '@/entities/user/User';
+import { UserRepository } from '@/ports/UserRepository';
 
 export class SignIn {
   constructor(readonly usersRepository: UserRepository, readonly refreshTokenRepository: RefreshTokenRepository) {}

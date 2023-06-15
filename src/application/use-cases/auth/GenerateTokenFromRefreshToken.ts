@@ -1,7 +1,7 @@
-import { config } from '@/config'
-import { RefreshTokenRepository } from '@/ports/RefreshTokenRepository'
-import { TokenGenerator } from '@/entities/auth/TokenGenerator'
-import { UserRepository } from '@/ports/UserRepository'
+import { config } from '@/config';
+import { RefreshTokenRepository } from '@/ports/RefreshTokenRepository';
+import { TokenGenerator } from '@/entities/token/TokenGenerator';
+import { UserRepository } from '@/ports/UserRepository';
 
 export class GenerateAuthTokenFromRefreshToken {
   constructor(readonly refreshTokenRepository: RefreshTokenRepository, readonly usersRepository: UserRepository) {}

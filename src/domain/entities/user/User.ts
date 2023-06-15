@@ -1,5 +1,5 @@
-import { Email } from './Email'
-import { Password } from './Password'
+import { Email } from '../auth/Email';
+import { Password } from '../auth/Password';
 
 // Entity - Aggregate
 export class User {
