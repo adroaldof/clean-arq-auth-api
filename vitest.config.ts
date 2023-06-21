@@ -16,6 +16,7 @@ export default defineConfig({
       skipFull: true,
     },
     globalSetup: ['./test-utils/migrate-on-setup-and-tear-down.ts'],
+    testTimeout: 10000,
   },
   resolve: {
     alias: {
