@@ -3,10 +3,13 @@ import { AuthDecorator } from '@/decorators/AuthDecorator'
 import { config } from './config'
 import { ExpressHttpServer } from './infra/http/ExpressHttpServer'
 import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken'
+import { GenerateResetPassword } from '@/use-cases/password/GenerateResetPassword'
 import { GetMe } from '@/use-cases/users/GetMe'
 import { KnexAdapter } from '@/database/KnexAdapter'
 import { ListUsers } from '@/use-cases/users/ListUsers'
 import { RefreshTokenRepositoryDatabase } from '@/repositories/RefreshTokenRepositoryDatabase'
+import { ResetPasswordController } from '@/controllers/ResetPasswordController'
+import { ResetPasswordRepositoryDatabase } from '@/repositories/ResetPasswordRepositoryDatabase'
 import { RootController } from './infra/controllers/RootController'
 import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '@/use-cases/auth/SignUp'
@@ -28,6 +31,10 @@ const signIn = new SignIn(usersRepository, refreshTokenRepository)
 const verifyToken = new VerifyToken()
 const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(refreshTokenRepository, usersRepository)
 new AuthController(httpServer, signUp, signIn, verifyToken, generateAuthTokenFromRefreshToken)
+
+const resetPasswordRepository = new ResetPasswordRepositoryDatabase(connection)
+const generateResetPassword = new GenerateResetPassword(usersRepository, resetPasswordRepository)
+new ResetPasswordController(httpServer, generateResetPassword)
 
 const getMe = new AuthDecorator(new GetMe(usersRepository))
 const listUsers = new AuthDecorator(new ListUsers(usersRepository))
