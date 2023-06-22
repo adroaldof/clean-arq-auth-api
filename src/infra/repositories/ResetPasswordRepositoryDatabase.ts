@@ -11,6 +11,15 @@ export class ResetPasswordRepositoryDatabase implements ResetPasswordPort {
     const [output] = await this.connection.connection(tableNames.resetPassword).insert(databaseInput).returning('uuid')
     return output.uuid
   }
+
+  async getByUuid(uuid: string): Promise<ResetPassword | null> {
+    const [databaseOutput] = await this.connection.connection(tableNames.resetPassword).where({ uuid })
+    return databaseOutput ? databaseOutput : null
+  }
+
+  async invalidateByUserUuid(userUuid: string): Promise<void> {
+    await this.connection.connection(tableNames.resetPassword).where({ userUuid }).update({ status: 'deleted' })
+  }
 }
 
 const fromResetPasswordToDatabase = (input: ResetPassword) => input.toJson()
