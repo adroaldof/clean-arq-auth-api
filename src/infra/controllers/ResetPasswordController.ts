@@ -17,7 +17,7 @@ export class ResetPasswordController {
       '/api/password/reset',
       async ({ body }: { body: ResetPasswordInput }) => {
         const output = await this.generateResetPassword.execute(body)
-        config.server.env !== 'test' && delete output.token // The token should be sent only to the user email (// FIXME: get back when implement send email feature)
+        ;['production'].includes(config.server.env) && delete output.token // The token should be sent only to the user email in production (// FIXME: get back when implement send email feature)
         return { statusCode: StatusCodes.CREATED, output }
       },
       validateSchemaMiddleware(resetPasswordSchema),
