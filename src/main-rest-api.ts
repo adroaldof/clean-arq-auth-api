@@ -13,6 +13,7 @@ import { ResetPasswordRepositoryDatabase } from '@/repositories/ResetPasswordRep
 import { RootController } from './infra/controllers/RootController'
 import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '@/use-cases/auth/SignUp'
+import { UpdatePassword } from '@/use-cases/password/UpdatePassword'
 import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase'
 import { UsersController } from '@/controllers/UsersController'
 import { VerifyToken } from '@/use-cases/auth/VerifyToken'
@@ -34,7 +35,8 @@ new AuthController(httpServer, signUp, signIn, verifyToken, generateAuthTokenFro
 
 const resetPasswordRepository = new ResetPasswordRepositoryDatabase(connection)
 const generateResetPassword = new GenerateResetPassword(usersRepository, resetPasswordRepository)
-new ResetPasswordController(httpServer, generateResetPassword)
+const updatePassword = new UpdatePassword(resetPasswordRepository, usersRepository)
+new ResetPasswordController(httpServer, generateResetPassword, updatePassword)
 
 const getMe = new AuthDecorator(new GetMe(usersRepository))
 const listUsers = new AuthDecorator(new ListUsers(usersRepository))
