@@ -7,6 +7,7 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [],
   test: {
+    unstubEnvs: true,
     globals: true,
     deps: {
       fallbackCJS: true,

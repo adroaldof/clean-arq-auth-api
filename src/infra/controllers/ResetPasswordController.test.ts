@@ -14,6 +14,7 @@ import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '@/use-cases/auth/SignUp'
 import { StatusCodes } from 'http-status-codes'
 import { tableNames } from '@/database/table-names.mjs'
+import { UpdatePassword } from '@/use-cases/password/UpdatePassword'
 import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase'
 import { VerifyToken } from '@/use-cases/auth/VerifyToken'
 
@@ -23,7 +24,8 @@ const connection = new KnexAdapter()
 const usersRepository = new UserRepositoryDatabase(connection)
 const resetPasswordRepository = new ResetPasswordRepositoryDatabase(connection)
 const generateResetPassword = new GenerateResetPassword(usersRepository, resetPasswordRepository)
-new ResetPasswordController(httpServer, generateResetPassword)
+const updatePassword = new UpdatePassword(resetPasswordRepository, usersRepository)
+new ResetPasswordController(httpServer, generateResetPassword, updatePassword)
 
 const refreshTokenRepository = new RefreshTokenRepositoryDatabase(connection)
 const signUp = new SignUp(usersRepository)
@@ -34,9 +36,9 @@ new AuthController(httpServer, signUp, signIn, verifyToken, generateAuthTokenFro
 
 const request: SuperTest<Test> = supertest(httpServer.server)
 
-const route = '/api/password/reset'
+describe('POST /api/password/reset', () => {
+  const route = '/api/password/reset'
 
-describe('POST /api/auth/sign-up', () => {
   it('returns `201 Created` with the message and token when `NODE_ENV=test`', async () => {
     const email = faker.internet.email()
     const input = { email, password: faker.internet.password() }
@@ -58,6 +60,8 @@ describe('POST /api/auth/sign-up', () => {
     const { body } = await request.post(route).send({ email }).expect(StatusCodes.CREATED)
     expect(Object.keys(body)).toEqual(['message'])
     expect(body).toEqual(expect.objectContaining({ message: expect.any(String) }))
+    // FIXME: find a proper way to restore config from `vi.spyOn`
+    vi.spyOn(configs.config, 'server', 'get').mockReturnValue({ env: 'test', port: 1, host: 'localhost' })
   })
 
   it('returns `400 Bad Request` when sending an empty input', async () => {
@@ -83,6 +87,71 @@ describe('POST /api/auth/sign-up', () => {
         code: 'invalid_string',
         message: 'invalid email',
         path: ['body', 'email'],
+      },
+    ])
+  })
+})
+
+describe('PUT /api/password', () => {
+  const route = '/api/password'
+
+  it('returns `200 OK` when calling when update password with the token, password and confirm password properties', async () => {
+    const email = faker.internet.email()
+    const authInput = { email, password: faker.internet.password() }
+    await request.post('/api/auth/sign-up').send(authInput).expect(StatusCodes.ACCEPTED)
+    const userBeforeUpdatePassword = await connection.connection(tableNames.users).where({ email }).first()
+    const { body: passwordReset } = await request
+      .post('/api/password/reset')
+      .send({ email })
+      .expect(StatusCodes.CREATED)
+    const password = faker.internet.password()
+    const input = { token: passwordReset.token, password, confirmPassword: password }
+    await request.put(route).send(input).expect(StatusCodes.OK)
+    const userAfterUpdatePassword = await connection.connection(tableNames.users).where({ email }).first()
+    expect(userAfterUpdatePassword.password).not.toBe(userBeforeUpdatePassword.password)
+    expect(userAfterUpdatePassword.salt).not.toBe(userBeforeUpdatePassword.salt)
+  })
+
+  it("returns `422 Unprocessable Entity` with the error `password don't match` message", async () => {
+    const email = faker.internet.email()
+    const authInput = { email, password: faker.internet.password() }
+    await request.post('/api/auth/sign-up').send(authInput).expect(StatusCodes.ACCEPTED)
+    const { body: passwordReset } = await request
+      .post('/api/password/reset')
+      .send({ email })
+      .expect(StatusCodes.CREATED)
+    const input = {
+      token: passwordReset.token,
+      password: faker.internet.password(),
+      confirmPassword: faker.internet.password(),
+    }
+    const { body } = await request.put(route).send(input).expect(StatusCodes.UNPROCESSABLE_ENTITY)
+    expect(body.message).toBe("password don't match")
+  })
+
+  it('returns `400 Bad Request` when sending an empty payload', async () => {
+    const { body } = await request.put(route).send({}).expect(StatusCodes.BAD_REQUEST)
+    expect(body).toEqual([
+      {
+        code: 'invalid_type',
+        expected: 'string',
+        received: 'undefined',
+        path: ['body', 'token'],
+        message: 'token is required',
+      },
+      {
+        code: 'invalid_type',
+        expected: 'string',
+        received: 'undefined',
+        path: ['body', 'password'],
+        message: 'password is required',
+      },
+      {
+        code: 'invalid_type',
+        expected: 'string',
+        received: 'undefined',
+        path: ['body', 'confirmPassword'],
+        message: 'confirmPassword is required',
       },
     ])
   })
