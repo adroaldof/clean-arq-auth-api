@@ -1,4 +1,5 @@
 import { Connection } from '@/database/Connection'
+import { Password } from '@/entities/auth/Password'
 import { tableNames } from '@/database/table-names.mjs'
 import { User } from '@/entities/user/User'
 import { UserRepository } from '@/ports/UserRepository'
@@ -20,6 +21,13 @@ export class UserRepositoryDatabase implements UserRepository {
 
   async save(auth: User): Promise<void> {
     await this.connection.connection(tableNames.users).insert(fromAuthToDatabaseInput(auth))
+  }
+
+  async updatePassword(uuid: string, password: Password): Promise<void> {
+    await this.connection
+      .connection(tableNames.users)
+      .update({ password: password.getValue(), salt: password.getSalt() })
+      .where({ uuid })
   }
 }
 

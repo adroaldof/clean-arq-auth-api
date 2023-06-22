@@ -7,6 +7,6 @@ export const mockUserRepository = (overrides: Partial<UserRepository> = {}): Use
   save: async () => Promise.resolve(),
   get: async () => User.create(faker.internet.email(), faker.internet.password()),
   list: async () => Promise.resolve([]),
-  updatePassword: async (password: Password) => Promise.resolve(),
+  updatePassword: async (uuid: string, password: Password) => Promise.resolve(),
   ...overrides,
 })

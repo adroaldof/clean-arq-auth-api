@@ -5,5 +5,5 @@ export interface UserRepository {
   save(auth: User): Promise<void>
   get(email: string): Promise<User | null>
   list(): Promise<User[]>
-  updatePassword(password: Password): Promise<void>
+  updatePassword(uuid: string, password: Password): Promise<void>
 }
