@@ -58,7 +58,8 @@ Some features will become available as the project evolves. The following list s
 - [x] Sign Out
 - [x] Verify Token
 - [x] Refresh Token
-- [ ] Reset Password
+- [x] Reset Password
+- [x] Change Password
 - [ ] Update User
 - [ ] Delete User (soft)
 - [x] Get Me
