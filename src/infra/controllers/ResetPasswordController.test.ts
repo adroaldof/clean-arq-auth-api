@@ -129,6 +129,17 @@ describe('PUT /api/password', () => {
     expect(body.message).toBe("password don't match")
   })
 
+  it('returns `422 Unprocessable Entity` with the error `invalid password reset token` message', async () => {
+    const password = faker.internet.password()
+    const input = {
+      token: faker.datatype.uuid(),
+      password,
+      confirmPassword: password,
+    }
+    const { body } = await request.put(route).send(input).expect(StatusCodes.UNPROCESSABLE_ENTITY)
+    expect(body.message).toBe('invalid reset password token')
+  })
+
   it('returns `400 Bad Request` when sending an empty payload', async () => {
     const { body } = await request.put(route).send({}).expect(StatusCodes.BAD_REQUEST)
     expect(body).toEqual([
