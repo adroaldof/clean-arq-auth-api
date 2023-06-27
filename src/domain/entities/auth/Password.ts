@@ -13,8 +13,8 @@ export class Password {
     const generatedSalt = salt || randomBytes(SALT_LENGTH).toString('hex')
     return new Promise((resolve, reject) => {
       pbkdf2(password, generatedSalt, ITERATIONS, KEY_LENGTH, DIGEST, (error, derivedKey) => {
-        if (error) reject(error)
-        resolve(new Password(derivedKey.toString('hex'), generatedSalt))
+        if (error) return reject(error)
+        return resolve(new Password(derivedKey.toString('hex'), generatedSalt))
       })
     })
   }
@@ -22,8 +22,8 @@ export class Password {
   validate(password: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       pbkdf2(password, this.salt, ITERATIONS, KEY_LENGTH, DIGEST, (error, derivedKey) => {
-        if (error) reject(error)
-        resolve(derivedKey.toString('hex') === this.value)
+        if (error) return reject(error)
+        return resolve(derivedKey.toString('hex') === this.value)
       })
     })
   }

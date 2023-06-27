@@ -1,6 +1,7 @@
 import { Connection } from '@/database/Connection'
+import { Password } from '@/entities/auth/Password'
 import { tableNames } from '@/database/table-names.mjs'
-import { User } from '@/entities/auth/User'
+import { User } from '@/entities/user/User'
 import { UserRepository } from '@/ports/UserRepository'
 
 export class UserRepositoryDatabase implements UserRepository {
@@ -8,7 +9,7 @@ export class UserRepositoryDatabase implements UserRepository {
 
   async list(): Promise<User[]> {
     const databaseOutput = await this.connection.connection(tableNames.users)
-    if (!databaseOutput) []
+    if (!databaseOutput.length) return []
     return Promise.all(databaseOutput.map(fromDatabaseOutputToAuth))
   }
 
@@ -21,6 +22,13 @@ export class UserRepositoryDatabase implements UserRepository {
   async save(auth: User): Promise<void> {
     await this.connection.connection(tableNames.users).insert(fromAuthToDatabaseInput(auth))
   }
+
+  async updatePassword(uuid: string, password: Password): Promise<void> {
+    await this.connection
+      .connection(tableNames.users)
+      .update({ password: password.getValue(), salt: password.getSalt() })
+      .where({ uuid })
+  }
 }
 
 const fromDatabaseOutputToAuth = async (databaseOutput: any): Promise<User> => {
@@ -30,6 +38,7 @@ const fromDatabaseOutputToAuth = async (databaseOutput: any): Promise<User> => {
     databaseOutput.salt,
     databaseOutput.name,
     databaseOutput.profilePictureUrl,
+    databaseOutput.uuid,
   )
 }
 

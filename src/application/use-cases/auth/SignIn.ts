@@ -1,26 +1,23 @@
 import { config } from '@/config'
 import { RefreshTokenRepository } from '@/ports/RefreshTokenRepository'
-import { TokenGenerator } from '@/entities/auth/TokenGenerator'
-import { User } from '@/entities/auth/User'
+import { TokenGenerator } from '@/entities/token/TokenGenerator'
+import { User } from '@/entities/user/User'
 import { UserRepository } from '@/ports/UserRepository'
 
 export class SignIn {
   constructor(readonly usersRepository: UserRepository, readonly refreshTokenRepository: RefreshTokenRepository) {}
 
   async execute(input: SignInInput): Promise<SignInOutput> {
-    const authUser = await this.usersRepository.get(input.email)
-    if (!authUser) throw new Error('invalid email or password')
-    const hydratedUser = await User.hydrateUser(
-      authUser.getEmail().getValue(),
-      authUser.password.getValue(),
-      authUser.password.getSalt(),
-    )
+    const user = await this.usersRepository.get(input.email)
+    if (!user) throw new Error('invalid email or password')
+    const isValidPassword = await user.isValidPassword(input.password)
+    if (!isValidPassword) throw new Error('invalid email or password')
     const tokenGenerator = new TokenGenerator(config.token.signKey)
-    const accessToken = tokenGenerator.generateAuthToken(hydratedUser)
+    const accessToken = tokenGenerator.generateAuthToken(user)
     const { uuid, refreshToken, expiresAt } = tokenGenerator.generateRefreshToken()
     await this.refreshTokenRepository.save({
       uuid,
-      userEmail: hydratedUser.getEmail().getValue(),
+      userEmail: user.getEmail().getValue(),
       expiresAt: new Date(expiresAt),
     })
     return { accessToken, refreshToken }

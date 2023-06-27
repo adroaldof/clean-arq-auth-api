@@ -1,15 +1,24 @@
-import { Email } from './Email'
-import { Password } from './Password'
+import { Email } from '../auth/Email';
+import { Password } from '../auth/Password';
+import { randomUUID } from 'crypto';
 
 // Entity - Aggregate
 export class User {
   name?: string
   profilePictureUrl?: string
+  uuid: string
 
   // Protecting email and password
-  private constructor(readonly email: Email, readonly password: Password, name?: string, profilePictureUrl?: string) {
+  private constructor(
+    readonly email: Email,
+    readonly password: Password,
+    name?: string,
+    profilePictureUrl?: string,
+    uuid?: string,
+  ) {
     this.name = name
     this.profilePictureUrl = profilePictureUrl
+    this.uuid = uuid || randomUUID()
   }
 
   // Factory method
@@ -25,10 +34,11 @@ export class User {
     salt: string,
     name?: string,
     profilePictureUrl?: string,
+    uuid?: string,
   ): Promise<User> {
     const emailInstance = new Email(email)
     const derivedPassword = new Password(password, salt)
-    return new User(emailInstance, derivedPassword, name, profilePictureUrl)
+    return new User(emailInstance, derivedPassword, name, profilePictureUrl, uuid)
   }
 
   async isValidPassword(password: string): Promise<boolean> {
@@ -37,6 +47,7 @@ export class User {
 
   toString() {
     return {
+      uuid: this.uuid,
       email: this.email.getValue(),
       name: this.name,
       profilePictureUrl: this.profilePictureUrl,

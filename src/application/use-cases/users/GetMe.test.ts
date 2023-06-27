@@ -1,11 +1,11 @@
-import { AuthDecorator } from '@/decorators/AuthDecorator'
-import { config } from '@/config'
-import { expect, it } from 'vitest'
-import { faker } from '@faker-js/faker'
-import { GetMe } from './GetMe'
-import { mockUserRepository } from '@/ports/UserRepository.mocks'
-import { TokenGenerator } from '@/entities/auth/TokenGenerator'
-import { User } from '@/entities/auth/User'
+import { AuthDecorator } from '@/decorators/AuthDecorator';
+import { config } from '@/config';
+import { expect, it } from 'vitest';
+import { faker } from '@faker-js/faker';
+import { GetMe } from './GetMe';
+import { mockUserRepository } from '@/ports/UserRepository.mocks';
+import { TokenGenerator } from '@/entities/token/TokenGenerator';
+import { User } from '@/entities/user/User';
 
 const userEmail = faker.internet.email()
 

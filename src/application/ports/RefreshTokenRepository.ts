@@ -1,4 +1,4 @@
-import { User } from '@/entities/auth/User'
+import { User } from '@/entities/user/User';
 
 export interface RefreshTokenRepository {
   save(input: RefreshTokenInput): Promise<string>

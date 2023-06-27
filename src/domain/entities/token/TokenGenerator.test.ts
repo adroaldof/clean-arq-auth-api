@@ -1,7 +1,6 @@
-import { beforeEach, expect, it } from 'vitest'
-import { faker } from '@faker-js/faker'
-import { TokenGenerator } from './TokenGenerator'
-import { User } from './User'
+import { beforeEach, expect, it } from 'vitest';
+import { TokenGenerator } from './TokenGenerator';
+import { User } from '../user/User';
 
 const secretOrPrivateKey = 'key'
 const expiresIn = 60 * 60 * 24 * 365 * 10 * 1000 // 10 years for test purpose only (seconds * minutes * hours * days * years * multiplier)
