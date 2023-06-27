@@ -1,27 +1,22 @@
-import supertest, { SuperTest, Test } from 'supertest';
-import { AuthController } from './AuthController';
-import { AuthDecorator } from '@/decorators/AuthDecorator';
-import {
-  beforeEach,
-  describe,
-  expect,
-  it
-  } from 'vitest';
-import { ExpressHttpServer } from '@/http/ExpressHttpServer';
-import { faker } from '@faker-js/faker';
-import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken';
-import { GetMe } from '@/use-cases/users/GetMe';
-import { KnexAdapter } from '@/database/KnexAdapter';
-import { ListUsers } from '@/use-cases/users/ListUsers';
-import { RefreshTokenRepositoryDatabase } from '@/repositories/RefreshTokenRepositoryDatabase';
-import { SignIn } from '@/use-cases/auth/SignIn';
-import { SignUp } from '@/use-cases/auth/SignUp';
-import { StatusCodes } from 'http-status-codes';
-import { tableNames } from '@/database/table-names.mjs';
-import { UserOutput } from '@/entities/user/User';
-import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase';
-import { UsersController } from './UsersController';
-import { VerifyToken } from '@/use-cases/auth/VerifyToken';
+import supertest, { SuperTest, Test } from 'supertest'
+import { AuthController } from './AuthController'
+import { AuthDecorator } from '@/decorators/AuthDecorator'
+import { describe, expect, it } from 'vitest'
+import { ExpressHttpServer } from '@/http/ExpressHttpServer'
+import { faker } from '@faker-js/faker'
+import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken'
+import { GetMe } from '@/use-cases/users/GetMe'
+import { KnexAdapter } from '@/database/KnexAdapter'
+import { ListUsers } from '@/use-cases/users/ListUsers'
+import { RefreshTokenRepositoryDatabase } from '@/repositories/RefreshTokenRepositoryDatabase'
+import { SignIn } from '@/use-cases/auth/SignIn'
+import { SignUp } from '@/use-cases/auth/SignUp'
+import { StatusCodes } from 'http-status-codes'
+import { tableNames } from '@/database/table-names.mjs'
+import { UserOutput } from '@/entities/user/User'
+import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase'
+import { UsersController } from './UsersController'
+import { VerifyToken } from '@/use-cases/auth/VerifyToken'
 
 const connection = new KnexAdapter()
 
@@ -88,6 +83,21 @@ describe('POST /api/users', () => {
       .set({ Authorization: `Bearer ${authenticated.accessToken}` })
       .expect(StatusCodes.OK)
     expect(output.filter(({ email }: UserOutput) => email === input.email)).toHaveLength(1)
+  })
+
+  it('returns `200 OK` with an empty users list', async () => {
+    const input = {
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+    }
+    await request.post('/api/auth/sign-up').send(input).expect(StatusCodes.ACCEPTED)
+    const { body: authenticated } = await request.post('/api/auth/sign-in').send(input).expect(StatusCodes.OK)
+    await connection.connection(tableNames.users).delete()
+    const { body: output } = await request
+      .get('/api/users')
+      .set({ Authorization: `Bearer ${authenticated.accessToken}` })
+      .expect(StatusCodes.OK)
+    expect(output).toHaveLength(0)
   })
 
   it('returns `422 Unprocessable Entity` with `invalid token` message when remove part of token', async () => {

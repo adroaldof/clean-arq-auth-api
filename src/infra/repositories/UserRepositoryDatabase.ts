@@ -9,7 +9,7 @@ export class UserRepositoryDatabase implements UserRepository {
 
   async list(): Promise<User[]> {
     const databaseOutput = await this.connection.connection(tableNames.users)
-    if (!databaseOutput) []
+    if (!databaseOutput.length) return []
     return Promise.all(databaseOutput.map(fromDatabaseOutputToAuth))
   }
 
