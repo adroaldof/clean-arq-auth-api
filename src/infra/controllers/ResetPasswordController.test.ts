@@ -52,8 +52,8 @@ describe('POST /api/password/reset', () => {
     expect(resetPassword.userUuid).toBe(user.uuid)
   })
 
-  it('returns `201 Created` with only the message property `NODE_ENV` is not test', async () => {
-    vi.spyOn(configs.config, 'server', 'get').mockReturnValue({ env: 'NOT_TEST', port: 1, host: 'localhost' })
+  it('returns `201 Created` with only the message property `NODE_ENV=production`', async () => {
+    vi.spyOn(configs.config, 'server', 'get').mockReturnValue({ env: 'production', port: 1, host: 'localhost' })
     const email = faker.internet.email()
     const input = { email, password: faker.internet.password() }
     await request.post('/api/auth/sign-up').send(input).expect(StatusCodes.ACCEPTED)
