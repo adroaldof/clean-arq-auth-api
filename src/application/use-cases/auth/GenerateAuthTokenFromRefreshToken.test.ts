@@ -13,10 +13,11 @@ const user = {
 
 it('returns a new authentication token from a refresh token', async () => {
   const refreshTokenRepository = mockRefreshTokenRepository({
-    getByUuid: () => Promise.resolve({ uuid: faker.datatype.uuid(), userEmail: user.email, expiresAt: new Date() }),
+    getByUuid: () =>
+      Promise.resolve({ uuid: faker.datatype.uuid(), userUuid: faker.datatype.uuid(), expiresAt: new Date() }),
   })
   const usersRepository = mockUserRepository()
-  const getAuthSpy = vi.spyOn(usersRepository, 'get')
+  const getAuthSpy = vi.spyOn(usersRepository, 'getByUuid')
   const getRefreshTokenSpy = vi.spyOn(refreshTokenRepository, 'getByUuid')
   const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(
     refreshTokenRepository,
@@ -50,10 +51,11 @@ it('returns `invalid refresh token error` when the refresh token is not found', 
 
 it('returns `invalid refresh token error` when refresh token user is not found', async () => {
   const refreshTokenRepository = mockRefreshTokenRepository({
-    getByUuid: () => Promise.resolve({ uuid: faker.datatype.uuid(), userEmail: user.email, expiresAt: new Date() }),
+    getByUuid: () =>
+      Promise.resolve({ uuid: faker.datatype.uuid(), userUuid: faker.datatype.uuid(), expiresAt: new Date() }),
   })
   const usersRepository = mockUserRepository({
-    get: () => Promise.resolve(null),
+    getByUuid: () => Promise.resolve(null),
   })
   const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(
     refreshTokenRepository,

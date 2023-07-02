@@ -27,7 +27,7 @@ export class RefreshTokenRepositoryDatabase implements RefreshTokenRepository {
 type RefreshTokenDatabase = {
   id?: number
   uuid: string
-  userEmail: string
+  userUuid: string
   expiresAt: Date
   status?: string
   createdAt?: Date
@@ -36,9 +36,9 @@ type RefreshTokenDatabase = {
 
 const fromRefreshTokenRepositoryInputToDatabaseInput = (input: RefreshTokenInput): RefreshTokenDatabase => ({
   uuid: input.uuid,
-  userEmail: input.userEmail,
+  userUuid: input.userUuid,
   expiresAt: input.expiresAt,
 })
 
 const fromDatabaseOutputToRefreshToken = (output: RefreshTokenDatabase): RefreshToken =>
-  new RefreshToken(output.uuid, output.userEmail, output.expiresAt)
+  new RefreshToken(output.uuid, output.userUuid, output.expiresAt)
