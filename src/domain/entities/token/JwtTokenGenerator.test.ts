@@ -29,12 +29,11 @@ it('verifies the user token content', async () => {
   const output = tokenGenerator.verify(derivedToken)
   expect(output).toEqual(
     expect.objectContaining({
-      email: expect.any(String),
+      uuid: expect.any(String),
       iat: expect.any(Number),
       exp: expect.any(Number),
     }),
   )
-  expect(output.email).toBe(authPayload.email)
 })
 
 it('returns `invalid token` exception when try to validate a malformed token', async () => {

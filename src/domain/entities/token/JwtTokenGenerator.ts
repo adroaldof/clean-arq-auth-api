@@ -7,7 +7,7 @@ const EXPIRES_IN = 15 * 1000 // 15 seconds
 const REFRESH_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 10 * 1000 // 10 days (seconds * minutes * hours * days * multiplier)
 
 type Token = JwtPayload & {
-  email: string
+  uuid: string
 }
 
 type RefreshToken = JwtPayload & {
@@ -23,7 +23,7 @@ export class JwtTokenGenerator {
   generateAuthToken(user: User, issueDate: Date = new Date(), expiresIn: number = EXPIRES_IN): string {
     const iat = issueDate.getTime()
     const exp = iat + expiresIn
-    const payload: Token = { email: user.email.getValue(), iat, exp }
+    const payload: Token = { uuid: user.uuid, iat, exp }
     return jwt.sign(payload, this.secretOrPrivateKey, options)
   }
 
