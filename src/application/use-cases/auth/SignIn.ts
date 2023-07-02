@@ -1,6 +1,6 @@
 import { config } from '@/config'
+import { JwtTokenGenerator } from '@/entities/token/JwtTokenGenerator'
 import { RefreshTokenRepository } from '@/ports/RefreshTokenRepository'
-import { TokenGenerator } from '@/entities/token/TokenGenerator'
 import { User } from '@/entities/user/User'
 import { UserRepository } from '@/ports/UserRepository'
 
@@ -12,7 +12,7 @@ export class SignIn {
     if (!user) throw new Error('invalid email or password')
     const isValidPassword = await user.isValidPassword(input.password)
     if (!isValidPassword) throw new Error('invalid email or password')
-    const tokenGenerator = new TokenGenerator(config.token.signKey)
+    const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
     const accessToken = tokenGenerator.generateAuthToken(user)
     const { uuid, refreshToken, expiresAt } = tokenGenerator.generateRefreshToken()
     await this.refreshTokenRepository.save({

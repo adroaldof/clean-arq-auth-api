@@ -1,11 +1,11 @@
-import { AuthDecorator } from '@/decorators/AuthDecorator';
-import { config } from '@/config';
-import { expect, it } from 'vitest';
-import { faker } from '@faker-js/faker';
-import { GetMe } from './GetMe';
-import { mockUserRepository } from '@/ports/UserRepository.mocks';
-import { TokenGenerator } from '@/entities/token/TokenGenerator';
-import { User } from '@/entities/user/User';
+import { AuthDecorator } from '@/decorators/AuthDecorator'
+import { config } from '@/config'
+import { expect, it } from 'vitest'
+import { faker } from '@faker-js/faker'
+import { GetMe } from './GetMe'
+import { JwtTokenGenerator } from '@/entities/token/JwtTokenGenerator'
+import { mockUserRepository } from '@/ports/UserRepository.mocks'
+import { User } from '@/entities/user/User'
 
 const userEmail = faker.internet.email()
 
@@ -32,7 +32,7 @@ it('returns the user information only when authenticated', async () => {
   const getMe = new GetMe(usersRepository)
   const authenticatedGetMe = new AuthDecorator(getMe)
   const mockedUser = await User.create(userEmail, faker.internet.password())
-  const tokenGenerator = new TokenGenerator(config.token.signKey)
+  const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
   const accessToken = tokenGenerator.generateAuthToken(mockedUser)
   const user = await authenticatedGetMe.execute({ authorization: `Bearer ${accessToken}` })
   expect(user).toEqual(

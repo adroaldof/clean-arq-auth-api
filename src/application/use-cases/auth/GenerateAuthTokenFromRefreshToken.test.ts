@@ -1,10 +1,10 @@
 import { config } from '@/config'
 import { expect, it, vi } from 'vitest'
 import { faker } from '@faker-js/faker'
-import { GenerateAuthTokenFromRefreshToken } from './GenerateTokenFromRefreshToken'
+import { GenerateAuthTokenFromRefreshToken } from './GenerateAuthTokenFromRefreshToken'
+import { JwtTokenGenerator } from '@/entities/token/JwtTokenGenerator'
 import { mockRefreshTokenRepository } from '@/ports/RefreshTokenRepository.mocks'
 import { mockUserRepository } from '@/ports/UserRepository.mocks'
-import { TokenGenerator } from '@/entities/token/TokenGenerator'
 
 const user = {
   email: 'john.doe@email.com',
@@ -22,7 +22,7 @@ it('returns a new authentication token from a refresh token', async () => {
     refreshTokenRepository,
     usersRepository,
   )
-  const tokenGenerator = new TokenGenerator(config.token.signKey)
+  const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
   const { refreshToken } = tokenGenerator.generateRefreshToken()
   const output = await generateAuthTokenFromRefreshToken.execute({ refreshToken })
   expect(getAuthSpy).toHaveBeenCalledOnce()
@@ -41,7 +41,7 @@ it('returns `invalid refresh token error` when the refresh token is not found', 
     refreshTokenRepository,
     usersRepository,
   )
-  const tokenGenerator = new TokenGenerator(config.token.signKey)
+  const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
   const { refreshToken } = tokenGenerator.generateRefreshToken()
   expect(() => generateAuthTokenFromRefreshToken.execute({ refreshToken })).rejects.toThrow(
     new Error('invalid refresh token'),
@@ -59,7 +59,7 @@ it('returns `invalid refresh token error` when refresh token user is not found',
     refreshTokenRepository,
     usersRepository,
   )
-  const tokenGenerator = new TokenGenerator(config.token.signKey)
+  const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
   const { refreshToken } = tokenGenerator.generateRefreshToken()
   expect(() => generateAuthTokenFromRefreshToken.execute({ refreshToken })).rejects.toThrow(
     new Error('invalid refresh token'),

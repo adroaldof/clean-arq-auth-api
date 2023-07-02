@@ -1,4 +1,4 @@
-import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken'
+import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateAuthTokenFromRefreshToken'
 import { HttpServer } from '../http/HttpServer'
 import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignUp } from '../../application/use-cases/auth/SignUp'

@@ -1,6 +1,6 @@
-import jwt, { Algorithm, JwtPayload, SignOptions } from 'jsonwebtoken';
-import { randomUUID } from 'crypto';
-import { User } from '../user/User';
+import jwt, { Algorithm, JwtPayload, SignOptions } from 'jsonwebtoken'
+import { randomUUID } from 'crypto'
+import { User } from '../user/User'
 
 const ALGORITHM: Algorithm = 'HS512'
 const EXPIRES_IN = 15 * 1000 // 15 seconds
@@ -17,7 +17,7 @@ type RefreshToken = JwtPayload & {
 const options: SignOptions = { algorithm: ALGORITHM }
 
 // Domain service
-export class TokenGenerator {
+export class JwtTokenGenerator {
   constructor(readonly secretOrPrivateKey: string) {}
 
   generateAuthToken(user: User, issueDate: Date = new Date(), expiresIn: number = EXPIRES_IN): string {

@@ -1,13 +1,13 @@
 import { config } from '@/config'
+import { JwtTokenGenerator } from '@/entities/token/JwtTokenGenerator'
 import { RefreshTokenRepository } from '@/ports/RefreshTokenRepository'
-import { TokenGenerator } from '@/entities/token/TokenGenerator'
 import { UserRepository } from '@/ports/UserRepository'
 
 export class GenerateAuthTokenFromRefreshToken {
   constructor(readonly refreshTokenRepository: RefreshTokenRepository, readonly usersRepository: UserRepository) {}
 
   async execute(input: GenerateAuthTokenFromRefreshTokenInput) {
-    const tokenGenerator = new TokenGenerator(config.token.signKey)
+    const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
     const token = tokenGenerator.verify(input.refreshToken)
     const refreshToken = await this.refreshTokenRepository.getByUuid(token.refreshTokenUuid)
     if (!refreshToken) throw new Error('invalid refresh token')

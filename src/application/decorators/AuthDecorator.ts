@@ -1,6 +1,6 @@
-import { config } from '@/config';
-import { TokenGenerator } from '@/entities/token/TokenGenerator';
-import { UseCase } from '@/use-cases/UseCase';
+import { config } from '@/config'
+import { JwtTokenGenerator } from '@/entities/token/JwtTokenGenerator'
+import { UseCase } from '@/use-cases/UseCase'
 
 export class AuthDecorator implements UseCase {
   constructor(readonly useCase: UseCase) {}
@@ -12,7 +12,7 @@ export class AuthDecorator implements UseCase {
 
     try {
       const [_authorizationPrefix, accessToken] = input.authorization.split(' ')
-      const tokenGenerator = new TokenGenerator(config.token.signKey)
+      const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
       const decodedToken = tokenGenerator.verify(accessToken)
       const authenticatedInput = { ...input.body, userEmail: decodedToken.email }
       return this.useCase.execute(authenticatedInput)
