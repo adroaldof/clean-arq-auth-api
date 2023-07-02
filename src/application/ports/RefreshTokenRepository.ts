@@ -1,8 +1,6 @@
-import { User } from '@/entities/user/User';
-
 export interface RefreshTokenRepository {
   save(input: RefreshTokenInput): Promise<string>
-  get(uuid: string): Promise<RefreshTokenRepositoryOutput | null>
+  getByUuid(uuid: string): Promise<RefreshTokenRepositoryOutput | null>
 }
 
 export type RefreshTokenRepositoryOutput = {

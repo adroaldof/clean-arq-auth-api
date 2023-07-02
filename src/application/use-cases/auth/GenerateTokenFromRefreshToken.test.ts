@@ -1,10 +1,10 @@
-import { config } from '@/config';
-import { expect, it, vi } from 'vitest';
-import { faker } from '@faker-js/faker';
-import { GenerateAuthTokenFromRefreshToken } from './GenerateTokenFromRefreshToken';
-import { mockRefreshTokenRepository } from '@/ports/RefreshTokenRepository.mocks';
-import { mockUserRepository } from '@/ports/UserRepository.mocks';
-import { TokenGenerator } from '@/entities/token/TokenGenerator';
+import { config } from '@/config'
+import { expect, it, vi } from 'vitest'
+import { faker } from '@faker-js/faker'
+import { GenerateAuthTokenFromRefreshToken } from './GenerateTokenFromRefreshToken'
+import { mockRefreshTokenRepository } from '@/ports/RefreshTokenRepository.mocks'
+import { mockUserRepository } from '@/ports/UserRepository.mocks'
+import { TokenGenerator } from '@/entities/token/TokenGenerator'
 
 const user = {
   email: 'john.doe@email.com',
@@ -13,11 +13,11 @@ const user = {
 
 it('returns a new authentication token from a refresh token', async () => {
   const refreshTokenRepository = mockRefreshTokenRepository({
-    get: () => Promise.resolve({ uuid: faker.datatype.uuid(), userEmail: user.email, expiresAt: new Date() }),
+    getByUuid: () => Promise.resolve({ uuid: faker.datatype.uuid(), userEmail: user.email, expiresAt: new Date() }),
   })
   const usersRepository = mockUserRepository()
   const getAuthSpy = vi.spyOn(usersRepository, 'get')
-  const getRefreshTokenSpy = vi.spyOn(refreshTokenRepository, 'get')
+  const getRefreshTokenSpy = vi.spyOn(refreshTokenRepository, 'getByUuid')
   const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(
     refreshTokenRepository,
     usersRepository,
@@ -50,7 +50,7 @@ it('returns `invalid refresh token error` when the refresh token is not found', 
 
 it('returns `invalid refresh token error` when refresh token user is not found', async () => {
   const refreshTokenRepository = mockRefreshTokenRepository({
-    get: () => Promise.resolve({ uuid: faker.datatype.uuid(), userEmail: user.email, expiresAt: new Date() }),
+    getByUuid: () => Promise.resolve({ uuid: faker.datatype.uuid(), userEmail: user.email, expiresAt: new Date() }),
   })
   const usersRepository = mockUserRepository({
     get: () => Promise.resolve(null),

@@ -12,7 +12,7 @@ export class RefreshTokenRepositoryDatabase implements RefreshTokenRepository {
       .returning('uuid')
   }
 
-  async get(uuid: string): Promise<RefreshTokenInput | null> {
+  async getByUuid(uuid: string): Promise<RefreshTokenInput | null> {
     const databaseOutput = await this.connection.connection(tableNames.refreshToken).where({ uuid }).first()
     if (!databaseOutput) return null
     return fromDatabaseOutputToRefreshTokenRepositoryOutput(databaseOutput)
