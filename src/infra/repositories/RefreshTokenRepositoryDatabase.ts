@@ -18,6 +18,10 @@ export class RefreshTokenRepositoryDatabase implements RefreshTokenRepository {
     if (!databaseOutput) return null
     return fromDatabaseOutputToRefreshToken(databaseOutput)
   }
+
+  invalidateRefreshToken(userEmail: string): Promise<void> {
+    throw new Error('Method not implemented.')
+  }
 }
 
 type RefreshTokenDatabase = {

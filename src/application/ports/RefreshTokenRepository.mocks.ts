@@ -6,5 +6,6 @@ export const mockRefreshTokenRepository = (
 ): RefreshTokenRepository => ({
   save: async () => Promise.resolve(faker.datatype.uuid()),
   getByUuid: async () => Promise.resolve(null),
+  invalidateRefreshToken: async () => Promise.resolve(),
   ...overrides,
 })
