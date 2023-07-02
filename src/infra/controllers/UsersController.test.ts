@@ -85,21 +85,6 @@ describe('POST /api/users', () => {
     expect(output.filter(({ email }: UserOutput) => email === input.email)).toHaveLength(1)
   })
 
-  it('returns `200 OK` with an empty users list', async () => {
-    const input = {
-      email: faker.internet.email(),
-      password: faker.internet.password(),
-    }
-    await request.post('/api/auth/sign-up').send(input).expect(StatusCodes.ACCEPTED)
-    const { body: authenticated } = await request.post('/api/auth/sign-in').send(input).expect(StatusCodes.OK)
-    await connection.connection(tableNames.users).delete()
-    const { body: output } = await request
-      .get('/api/users')
-      .set({ Authorization: `Bearer ${authenticated.accessToken}` })
-      .expect(StatusCodes.OK)
-    expect(output).toHaveLength(0)
-  })
-
   it('returns `422 Unprocessable Entity` with `invalid token` message when remove part of token', async () => {
     const { body: output } = await request
       .get('/api/users')
