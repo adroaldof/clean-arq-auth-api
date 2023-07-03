@@ -19,8 +19,8 @@ export class RefreshTokenRepositoryDatabase implements RefreshTokenRepository {
     return fromDatabaseOutputToRefreshToken(databaseOutput)
   }
 
-  invalidateRefreshToken(userEmail: string): Promise<void> {
-    throw new Error('Method not implemented.')
+  invalidateByUserUuid(userUuid: string): Promise<void> {
+    return this.connection.connection(tableNames.refreshToken).where({ userUuid }).update({ status: 'deleted' })
   }
 }
 

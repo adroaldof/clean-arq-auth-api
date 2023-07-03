@@ -10,6 +10,7 @@ import { KnexAdapter } from '@/database/KnexAdapter'
 import { ListUsers } from '@/use-cases/users/ListUsers'
 import { RefreshTokenRepositoryDatabase } from '@/repositories/RefreshTokenRepositoryDatabase'
 import { SignIn } from '@/use-cases/auth/SignIn'
+import { SignOut } from '@/use-cases/auth/SignOut'
 import { SignUp } from '@/use-cases/auth/SignUp'
 import { StatusCodes } from 'http-status-codes'
 import { tableNames } from '@/database/table-names.mjs'
@@ -26,9 +27,10 @@ const usersRepository = new UserRepositoryDatabase(connection)
 const refreshTokenRepository = new RefreshTokenRepositoryDatabase(connection)
 const signUp = new SignUp(usersRepository)
 const signIn = new SignIn(usersRepository, refreshTokenRepository)
+const signOut = new AuthDecorator(new SignOut(refreshTokenRepository))
 const verifyToken = new VerifyToken()
 const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(refreshTokenRepository, usersRepository)
-new AuthController(httpServer, signUp, signIn, verifyToken, generateAuthTokenFromRefreshToken)
+new AuthController(httpServer, signUp, signIn, signOut, verifyToken, generateAuthTokenFromRefreshToken)
 
 const getMe = new AuthDecorator(new GetMe(usersRepository))
 const listUsers = new AuthDecorator(new ListUsers(usersRepository))
