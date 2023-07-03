@@ -7,12 +7,12 @@ import { JwtTokenGenerator } from '@/entities/token/JwtTokenGenerator'
 import { mockUserRepository } from '@/ports/UserRepository.mocks'
 import { User } from '@/entities/user/User'
 
-const userUuid = faker.datatype.uuid()
+const authenticatedUserUuid = faker.datatype.uuid()
 
 it('returns the user information with the basic information (only email)', async () => {
   const usersRepository = mockUserRepository()
   const getMe = new GetMe(usersRepository)
-  const user = await getMe.execute({ userUuid })
+  const user = await getMe.execute({ authenticatedUserUuid })
   expect(user).toEqual(
     expect.objectContaining({
       email: expect.any(String),
@@ -23,7 +23,7 @@ it('returns the user information with the basic information (only email)', async
 it('returns null when user is not found', async () => {
   const usersRepository = mockUserRepository({ getByUuid: async () => Promise.resolve(null) })
   const getMe = new GetMe(usersRepository)
-  const user = await getMe.execute({ userUuid })
+  const user = await getMe.execute({ authenticatedUserUuid })
   expect(user).toBeNull()
 })
 
@@ -46,7 +46,7 @@ it('throws `not authenticated` when no passing a token in the input', async () =
   const usersRepository = mockUserRepository()
   const getMe = new GetMe(usersRepository)
   const authenticatedGetMe = new AuthDecorator(getMe)
-  expect(() => authenticatedGetMe.execute({ userUuid })).rejects.toThrow('not authenticated')
+  expect(() => authenticatedGetMe.execute({ authenticatedUserUuid })).rejects.toThrow('not authenticated')
 })
 
 it('returns the user complete information (email, name, profilePictureUrl)', async () => {
@@ -57,7 +57,7 @@ it('returns the user complete information (email, name, profilePictureUrl)', asy
       ),
   })
   const getMe = new GetMe(usersRepository)
-  const user = await getMe.execute({ userUuid: userUuid })
+  const user = await getMe.execute({ authenticatedUserUuid })
   expect(user).toEqual(
     expect.objectContaining({
       email: expect.any(String),

@@ -4,10 +4,10 @@ export class SignOut {
   constructor(readonly refreshTokenRepository: RefreshTokenRepository) {}
 
   async execute(input: SignOutInput): Promise<void> {
-    await this.refreshTokenRepository.invalidateByUserUuid(input.userUuid)
+    await this.refreshTokenRepository.invalidateByUserUuid(input.authenticatedUserUuid)
   }
 }
 
 type SignOutInput = {
-  userUuid: string
+  authenticatedUserUuid: string
 }
