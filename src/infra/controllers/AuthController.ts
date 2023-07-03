@@ -1,8 +1,11 @@
-import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken'
+import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateAuthTokenFromRefreshToken'
 import { HttpServer } from '../http/HttpServer'
+import { Request } from 'express'
 import { SignIn } from '@/use-cases/auth/SignIn'
+import { SignOut } from '@/use-cases/auth/SignOut'
 import { SignUp } from '../../application/use-cases/auth/SignUp'
 import { StatusCodes } from 'http-status-codes'
+import { UseCase } from '@/use-cases/UseCase'
 import { validateSchemaMiddleware } from '@/http/validate-schema-middleware'
 import { VerifyToken } from '@/use-cases/auth/VerifyToken'
 import { z } from 'zod'
@@ -12,6 +15,7 @@ export class AuthController {
     readonly httpServer: HttpServer,
     readonly signUp: SignUp,
     readonly signIn: SignIn,
+    readonly signOut: UseCase,
     readonly verifyToken: VerifyToken,
     readonly generateAuthTokenFromRefreshToken: GenerateAuthTokenFromRefreshToken,
   ) {
@@ -57,6 +61,17 @@ export class AuthController {
       async ({ body }: { body: RefreshTokenInput }) => {
         const output = await this.generateAuthTokenFromRefreshToken.execute(body)
         return { output, statusCode: StatusCodes.CREATED }
+      },
+      validateSchemaMiddleware(refreshTokenSchema),
+    )
+
+    this.httpServer.on(
+      'post',
+      '/api/auth/sign-out',
+      async (req: Request) => {
+        const { authorization } = req.headers
+        await this.signOut.execute({ authorization })
+        return { statusCode: StatusCodes.OK, emptyResponse: true }
       },
       validateSchemaMiddleware(refreshTokenSchema),
     )

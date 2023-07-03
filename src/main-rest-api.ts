@@ -2,7 +2,7 @@ import { AuthController } from '@/infra/controllers/AuthController'
 import { AuthDecorator } from '@/decorators/AuthDecorator'
 import { config } from './config'
 import { ExpressHttpServer } from './infra/http/ExpressHttpServer'
-import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateTokenFromRefreshToken'
+import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateAuthTokenFromRefreshToken'
 import { GenerateResetPassword } from '@/use-cases/password/GenerateResetPassword'
 import { GetMe } from '@/use-cases/users/GetMe'
 import { KnexAdapter } from '@/database/KnexAdapter'
@@ -12,6 +12,7 @@ import { ResetPasswordController } from '@/controllers/ResetPasswordController'
 import { ResetPasswordRepositoryDatabase } from '@/repositories/ResetPasswordRepositoryDatabase'
 import { RootController } from './infra/controllers/RootController'
 import { SignIn } from '@/use-cases/auth/SignIn'
+import { SignOut } from '@/use-cases/auth/SignOut'
 import { SignUp } from '@/use-cases/auth/SignUp'
 import { UpdatePassword } from '@/use-cases/password/UpdatePassword'
 import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase'
@@ -29,9 +30,10 @@ const usersRepository = new UserRepositoryDatabase(connection)
 const refreshTokenRepository = new RefreshTokenRepositoryDatabase(connection)
 const signUp = new SignUp(usersRepository)
 const signIn = new SignIn(usersRepository, refreshTokenRepository)
+const signOut = new AuthDecorator(new SignOut(refreshTokenRepository))
 const verifyToken = new VerifyToken()
 const generateAuthTokenFromRefreshToken = new GenerateAuthTokenFromRefreshToken(refreshTokenRepository, usersRepository)
-new AuthController(httpServer, signUp, signIn, verifyToken, generateAuthTokenFromRefreshToken)
+new AuthController(httpServer, signUp, signIn, signOut, verifyToken, generateAuthTokenFromRefreshToken)
 
 const resetPasswordRepository = new ResetPasswordRepositoryDatabase(connection)
 const generateResetPassword = new GenerateResetPassword(usersRepository, resetPasswordRepository)

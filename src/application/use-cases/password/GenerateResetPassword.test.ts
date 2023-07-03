@@ -5,7 +5,7 @@ import { mockResetPasswordRepository } from '@/ports/ResetPasswordPort.mocks'
 import { mockUserRepository } from '@/ports/UserRepository.mocks'
 
 it('returns `a confirmation email has been sent to your registered email address` when the user is not found (security)', async () => {
-  const usersRepository = mockUserRepository({ get: async () => null })
+  const usersRepository = mockUserRepository({ getByEmail: async () => null })
   const passwordResetPasswordRepository = mockResetPasswordRepository()
   const generateResetPasswordToken = new GenerateResetPassword(usersRepository, passwordResetPasswordRepository)
   const output = await generateResetPasswordToken.execute({ email: faker.internet.email() })

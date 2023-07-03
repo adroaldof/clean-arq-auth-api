@@ -9,12 +9,29 @@ const payload = {
   password: 'abc123',
 }
 
-it('returns the access token and the refresh token on authenticating the user', async () => {
+it("throws `invalid email or password` when the password don't match", async () => {
   const usersRepository = mockUserRepository({
-    get: () => Promise.resolve(User.create(payload.email, payload.password)),
+    getByEmail: () => Promise.resolve(User.create(payload.email, payload.password)),
   })
   const refreshTokenRepository = mockRefreshTokenRepository()
-  const getAuthSpy = vi.spyOn(usersRepository, 'get')
+  const signIn = new SignIn(usersRepository, refreshTokenRepository)
+  const input = { ...payload, password: 'wrong-password' }
+  expect(() => signIn.execute(input)).rejects.toThrow(new Error('invalid email or password'))
+})
+
+it('throws `invalid email or password` when the user is not found', async () => {
+  const usersRepository = mockUserRepository({ getByEmail: () => Promise.resolve(null) })
+  const refreshTokenRepository = mockRefreshTokenRepository()
+  const signIn = new SignIn(usersRepository, refreshTokenRepository)
+  expect(() => signIn.execute(payload)).rejects.toThrow(new Error('invalid email or password'))
+})
+
+it('returns the access token and the refresh token on authenticating the user', async () => {
+  const usersRepository = mockUserRepository({
+    getByEmail: () => Promise.resolve(User.create(payload.email, payload.password)),
+  })
+  const refreshTokenRepository = mockRefreshTokenRepository()
+  const getAuthSpy = vi.spyOn(usersRepository, 'getByEmail')
   const refreshTokenSpy = vi.spyOn(refreshTokenRepository, 'save')
   const signIn = new SignIn(usersRepository, refreshTokenRepository)
   const output = await signIn.execute(payload)
@@ -26,21 +43,4 @@ it('returns the access token and the refresh token on authenticating the user', 
       refreshToken: expect.any(String),
     }),
   )
-})
-
-it("throws `invalid email or password` when the password don't match", async () => {
-  const usersRepository = mockUserRepository({
-    get: () => Promise.resolve(User.create(payload.email, payload.password)),
-  })
-  const refreshTokenRepository = mockRefreshTokenRepository()
-  const signIn = new SignIn(usersRepository, refreshTokenRepository)
-  const input = { ...payload, password: 'wrong-password' }
-  expect(() => signIn.execute(input)).rejects.toThrow(new Error('invalid email or password'))
-})
-
-it('throws `invalid email or password` when the user is not found', async () => {
-  const usersRepository = mockUserRepository({ get: () => Promise.resolve(null) })
-  const refreshTokenRepository = mockRefreshTokenRepository()
-  const signIn = new SignIn(usersRepository, refreshTokenRepository)
-  expect(() => signIn.execute(payload)).rejects.toThrow(new Error('invalid email or password'))
 })

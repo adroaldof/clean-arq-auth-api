@@ -8,7 +8,7 @@ export class GenerateResetPassword {
   constructor(readonly usersRepository: UserRepository, readonly resetPasswordRepository: ResetPasswordPort) {}
 
   async execute(input: ResetPasswordInput): Promise<ResetPasswordOutput> {
-    const user = await this.usersRepository.get(input.email)
+    const user = await this.usersRepository.getByEmail(input.email)
     if (!user) return { message: secureResetPasswordMessage }
     const passwordReset = new ResetPassword(undefined, user.uuid)
     const uuid = await this.resetPasswordRepository.save(passwordReset)

@@ -13,14 +13,16 @@ export class UserRepositoryDatabase implements UserRepository {
     return Promise.all(databaseOutput.map(fromDatabaseOutputToAuth))
   }
 
-  async get(email: string): Promise<User> {
+  async getByEmail(email: string): Promise<User> {
     const [databaseOutput] = await this.connection.connection(tableNames.users).where({ email })
     if (!databaseOutput) throw new Error('invalid email or password')
     return fromDatabaseOutputToAuth(databaseOutput)
   }
 
-  async save(auth: User): Promise<void> {
-    await this.connection.connection(tableNames.users).insert(fromAuthToDatabaseInput(auth))
+  async getByUuid(uuid: string): Promise<User> {
+    const [databaseOutput] = await this.connection.connection(tableNames.users).where({ uuid })
+    if (!databaseOutput) throw new Error('invalid email or password')
+    return fromDatabaseOutputToAuth(databaseOutput)
   }
 
   async updatePassword(uuid: string, password: Password): Promise<void> {
@@ -28,6 +30,10 @@ export class UserRepositoryDatabase implements UserRepository {
       .connection(tableNames.users)
       .update({ password: password.getValue(), salt: password.getSalt() })
       .where({ uuid })
+  }
+
+  async save(auth: User): Promise<void> {
+    await this.connection.connection(tableNames.users).insert(fromAuthToDatabaseInput(auth))
   }
 }
 
