@@ -33,6 +33,13 @@ export class UserRepositoryDatabase implements UserRepository {
   async save(auth: User): Promise<void> {
     await this.connection.connection(tableNames.users).insert(fromAuthToDatabaseInput(auth))
   }
+
+  async update(user: User): Promise<void> {
+    const databaseInput = fromAuthToDatabaseInput(user)
+    delete databaseInput.password
+    delete databaseInput.salt
+    await this.connection.connection(tableNames.users).update(databaseInput).where({ uuid: user.uuid })
+  }
 }
 
 const fromDatabaseOutputToAuth = async (databaseOutput: any): Promise<User> => {
