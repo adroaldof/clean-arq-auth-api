@@ -60,7 +60,7 @@ Some features will become available as the project evolves. The following list s
 - [x] Refresh Token
 - [x] Reset Password
 - [x] Change Password
-- [ ] Update User
+- [x] Update User
 - [ ] Delete User (soft)
 - [x] Get Me
 - [x] List Users
