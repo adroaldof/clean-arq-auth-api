@@ -5,9 +5,10 @@ import { UserRepository } from '@/ports/UserRepository'
 export class UserDetail implements UseCase {
   constructor(readonly usersRepository: UserRepository) {}
 
-  async execute(input: UserDetailInput): Promise<UserOutput | null> {
-    const authenticatedUser = await this.usersRepository.getByUuid(input.userUuid)
-    return authenticatedUser ? authenticatedUser.toJson() : null
+  async execute(input: UserDetailInput): Promise<UserOutput> {
+    const foundUser = await this.usersRepository.getByUuid(input.userUuid)
+    if (!foundUser) throw new Error('user not found')
+    return foundUser.toJson()
   }
 }
 

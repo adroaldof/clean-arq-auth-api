@@ -7,11 +7,10 @@ import { UserDetail } from './UserDetail'
 
 const userUuid = faker.datatype.uuid()
 
-it('returns null when user is not found', async () => {
+it('throws `user not found` when the user uuid is invalid', async () => {
   const usersRepository = mockUserRepository({ getByUuid: async () => Promise.resolve(null) })
   const getMe = new UserDetail(usersRepository)
-  const user = await getMe.execute({ userUuid })
-  expect(user).toBeNull()
+  expect(() => getMe.execute({ userUuid })).rejects.toThrow('user not found')
 })
 
 it('returns the user complete information (email, name, profilePictureUrl)', async () => {
