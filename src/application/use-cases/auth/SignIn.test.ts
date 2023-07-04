@@ -1,5 +1,6 @@
 import { expect, it, vi } from 'vitest'
 import { mockRefreshTokenRepository } from '@/ports/RefreshTokenRepository.mocks'
+import { mockUser } from '@/entities/user/User.mocks'
 import { mockUserRepository } from '@/ports/UserRepository.mocks'
 import { SignIn } from './SignIn'
 import { User } from '@/entities/user/User'
@@ -11,7 +12,7 @@ const payload = {
 
 it("throws `invalid email or password` when the password don't match", async () => {
   const usersRepository = mockUserRepository({
-    getByEmail: () => Promise.resolve(User.create(payload.email, payload.password)),
+    getByEmail: () => Promise.resolve(mockUser({ email: payload.email, password: payload.password })),
   })
   const refreshTokenRepository = mockRefreshTokenRepository()
   const signIn = new SignIn(usersRepository, refreshTokenRepository)
@@ -28,7 +29,7 @@ it('throws `invalid email or password` when the user is not found', async () => 
 
 it('returns the access token and the refresh token on authenticating the user', async () => {
   const usersRepository = mockUserRepository({
-    getByEmail: () => Promise.resolve(User.create(payload.email, payload.password)),
+    getByEmail: () => Promise.resolve(mockUser({ email: payload.email, password: payload.password })),
   })
   const refreshTokenRepository = mockRefreshTokenRepository()
   const getAuthSpy = vi.spyOn(usersRepository, 'getByEmail')

@@ -4,8 +4,8 @@ import { expect, it } from 'vitest'
 import { faker } from '@faker-js/faker'
 import { GetMe } from './GetMe'
 import { JwtTokenGenerator } from '@/entities/token/JwtTokenGenerator'
+import { mockUser } from '@/entities/user/User.mocks'
 import { mockUserRepository } from '@/ports/UserRepository.mocks'
-import { User } from '@/entities/user/User'
 
 const authenticatedUserUuid = faker.datatype.uuid()
 
@@ -31,7 +31,7 @@ it('returns the user information only when authenticated', async () => {
   const usersRepository = mockUserRepository()
   const getMe = new GetMe(usersRepository)
   const authenticatedGetMe = new AuthDecorator(getMe)
-  const mockedUser = await User.create(faker.internet.email(), faker.internet.password())
+  const mockedUser = await mockUser()
   const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
   const accessToken = tokenGenerator.generateAuthToken(mockedUser)
   const user = await authenticatedGetMe.execute({ authorization: `Bearer ${accessToken}` })
@@ -51,10 +51,7 @@ it('throws `not authenticated` when no passing a token in the input', async () =
 
 it('returns the user complete information (email, name, profilePictureUrl)', async () => {
   const usersRepository = mockUserRepository({
-    getByUuid: async () =>
-      Promise.resolve(
-        User.create(faker.internet.email(), faker.internet.password(), faker.name.fullName(), faker.image.imageUrl()),
-      ),
+    getByUuid: async () => Promise.resolve(mockUser()),
   })
   const getMe = new GetMe(usersRepository)
   const user = await getMe.execute({ authenticatedUserUuid })

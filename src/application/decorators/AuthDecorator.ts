@@ -11,10 +11,11 @@ export class AuthDecorator implements UseCase {
     }
 
     try {
-      const [_authorizationPrefix, accessToken] = input.authorization.split(' ')
+      const { authorization, ...rest } = input
+      const [_authorizationPrefix, accessToken] = authorization.split(' ')
       const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
       const decodedToken = tokenGenerator.verify(accessToken)
-      const authenticatedInput = { ...input.body, authenticatedUserUuid: decodedToken.uuid }
+      const authenticatedInput = { ...rest, authenticatedUserUuid: decodedToken.uuid }
       return this.useCase.execute(authenticatedInput)
     } catch (error) {
       throw new Error('not authenticated')

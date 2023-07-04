@@ -1,6 +1,6 @@
-import { Email } from '../auth/Email';
-import { Password } from '../auth/Password';
-import { randomUUID } from 'crypto';
+import { Email } from '../auth/Email'
+import { Password } from '../auth/Password'
+import { randomUUID } from 'crypto'
 
 // Entity - Aggregate
 export class User {
@@ -22,10 +22,16 @@ export class User {
   }
 
   // Factory method
-  static async create(email: string, password: string, name?: string, profilePictureUrl?: string): Promise<User> {
+  static async create(
+    email: string,
+    password: string,
+    name?: string,
+    profilePictureUrl?: string,
+    uuid?: string,
+  ): Promise<User> {
     const emailInstance = new Email(email)
     const derivedPassword = await Password.create(password)
-    return new User(emailInstance, derivedPassword, name, profilePictureUrl)
+    return new User(emailInstance, derivedPassword, name, profilePictureUrl, uuid)
   }
 
   static async hydrateUser(
@@ -45,7 +51,7 @@ export class User {
     return this.password.validate(password)
   }
 
-  toString() {
+  toJson() {
     return {
       uuid: this.uuid,
       email: this.email.getValue(),

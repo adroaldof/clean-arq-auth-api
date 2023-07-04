@@ -13,16 +13,14 @@ export class UserRepositoryDatabase implements UserRepository {
     return Promise.all(databaseOutput.map(fromDatabaseOutputToAuth))
   }
 
-  async getByEmail(email: string): Promise<User> {
-    const [databaseOutput] = await this.connection.connection(tableNames.users).where({ email })
-    if (!databaseOutput) throw new Error('invalid email or password')
-    return fromDatabaseOutputToAuth(databaseOutput)
+  async getByEmail(email: string): Promise<User | null> {
+    const databaseOutput = await this.connection.connection(tableNames.users).where({ email }).first()
+    return databaseOutput ? fromDatabaseOutputToAuth(databaseOutput) : null
   }
 
-  async getByUuid(uuid: string): Promise<User> {
-    const [databaseOutput] = await this.connection.connection(tableNames.users).where({ uuid })
-    if (!databaseOutput) throw new Error('invalid email or password')
-    return fromDatabaseOutputToAuth(databaseOutput)
+  async getByUuid(uuid: string): Promise<User | null> {
+    const databaseOutput = await this.connection.connection(tableNames.users).where({ uuid }).first()
+    return databaseOutput ? fromDatabaseOutputToAuth(databaseOutput) : null
   }
 
   async updatePassword(uuid: string, password: Password): Promise<void> {
