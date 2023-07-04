@@ -15,6 +15,7 @@ import { SignIn } from '@/use-cases/auth/SignIn'
 import { SignOut } from '@/use-cases/auth/SignOut'
 import { SignUp } from '@/use-cases/auth/SignUp'
 import { UpdatePassword } from '@/use-cases/password/UpdatePassword'
+import { UpdateUser } from '@/use-cases/users/UpdateUser'
 import { UserDetail } from '@/use-cases/users/UserDetail'
 import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase'
 import { UsersController } from '@/controllers/UsersController'
@@ -41,9 +42,10 @@ const generateResetPassword = new GenerateResetPassword(usersRepository, resetPa
 const updatePassword = new UpdatePassword(resetPasswordRepository, usersRepository)
 new ResetPasswordController(httpServer, generateResetPassword, updatePassword)
 
+const listUsers = new AuthDecorator(new ListUsers(usersRepository))
 const getMe = new AuthDecorator(new GetMe(usersRepository))
 const userDetail = new AuthDecorator(new UserDetail(usersRepository))
-const listUsers = new AuthDecorator(new ListUsers(usersRepository))
-new UsersController(httpServer, getMe, userDetail, listUsers)
+const updateUser = new AuthDecorator(new UpdateUser(usersRepository))
+new UsersController(httpServer, listUsers, getMe, userDetail, updateUser)
 
 httpServer.listen(config.server.port)
