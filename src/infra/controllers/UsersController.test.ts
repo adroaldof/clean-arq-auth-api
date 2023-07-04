@@ -91,6 +91,7 @@ describe('GET /api/users/:uuid', () => {
       .get(`/api/users/${user.uuid}`)
       .set({ Authorization: `Bearer ${authenticated.accessToken}` })
       .expect(StatusCodes.OK)
+    expect(output).toBeInstanceOf(Object)
     expect(output.email).toBe(user.email.getValue())
   })
 
@@ -117,6 +118,7 @@ describe('GET /api/users', () => {
       .get('/api/users')
       .set({ Authorization: `Bearer ${authenticated.accessToken}` })
       .expect(StatusCodes.OK)
+    expect(output).toBeInstanceOf(Array)
     const [createdUser] = output.filter((user: UserOutput) => user.email === input.email)
     expect(createdUser).toEqual(
       expect.objectContaining({
