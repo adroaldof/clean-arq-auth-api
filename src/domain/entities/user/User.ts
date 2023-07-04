@@ -1,6 +1,6 @@
-import { Email } from '../auth/Email';
-import { Password } from '../auth/Password';
-import { randomUUID } from 'crypto';
+import { Email } from '../auth/Email'
+import { Password } from '../auth/Password'
+import { randomUUID } from 'crypto'
 
 // Entity - Aggregate
 export class User {
@@ -45,7 +45,7 @@ export class User {
     return this.password.validate(password)
   }
 
-  toString() {
+  toJson() {
     return {
       uuid: this.uuid,
       email: this.email.getValue(),

@@ -7,7 +7,7 @@ export class UserDetail implements UseCase {
 
   async execute(input: UserDetailInput): Promise<UserOutput | null> {
     const authenticatedUser = await this.usersRepository.getByUuid(input.userUuid)
-    return authenticatedUser ? authenticatedUser.toString() : null
+    return authenticatedUser ? authenticatedUser.toJson() : null
   }
 }
 
