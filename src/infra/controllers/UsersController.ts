@@ -7,9 +7,10 @@ import { z } from 'zod'
 export class UsersController {
   constructor(
     readonly httpServer: HttpServer,
+    readonly listUsers: UseCase,
     readonly getMe: UseCase,
     readonly userDetail: UseCase,
-    readonly listUsers: UseCase,
+    readonly updateUser: UseCase,
   ) {
     this.httpServer.on(
       'get',
@@ -30,6 +31,19 @@ export class UsersController {
         const { authorization } = headers
         const { userUuid } = params
         const output = await this.userDetail.execute({ authorization, userUuid })
+        return { output }
+      },
+      validateSchemaMiddleware(userDetailSchema),
+    )
+
+    this.httpServer.on(
+      'put',
+      '/api/users/:userUuid',
+      async (req: Request) => {
+        const { headers, params, body } = req
+        const { authorization } = headers
+        const { userUuid } = params
+        const output = await this.updateUser.execute({ authorization, userUuid, ...body })
         return { output }
       },
       validateSchemaMiddleware(userDetailSchema),
@@ -60,5 +74,19 @@ const userDetailSchema = z.object({
   }),
   params: z.object({
     userUuid: z.string({ required_error: 'user uuid is required' }),
+  }),
+})
+
+const updateUserSchema = z.object({
+  headers: z.object({
+    authorization: z.string({ required_error: 'authorization header is required' }),
+  }),
+  params: z.object({
+    userUuid: z.string({ required_error: 'user uuid is required' }),
+  }),
+  body: z.object({
+    name: z.string(),
+    email: z.string(),
+    profilePictureUrl: z.string(),
   }),
 })

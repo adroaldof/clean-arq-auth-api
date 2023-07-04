@@ -7,4 +7,5 @@ export interface UserRepository {
   getByUuid(uuid: string): Promise<User | null>
   updatePassword(uuid: string, password: Password): Promise<void>
   save(auth: User): Promise<void>
+  update(user: User): Promise<void>
 }
