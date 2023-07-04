@@ -22,10 +22,16 @@ export class User {
   }
 
   // Factory method
-  static async create(email: string, password: string, name?: string, profilePictureUrl?: string): Promise<User> {
+  static async create(
+    email: string,
+    password: string,
+    name?: string,
+    profilePictureUrl?: string,
+    uuid?: string,
+  ): Promise<User> {
     const emailInstance = new Email(email)
     const derivedPassword = await Password.create(password)
-    return new User(emailInstance, derivedPassword, name, profilePictureUrl)
+    return new User(emailInstance, derivedPassword, name, profilePictureUrl, uuid)
   }
 
   static async hydrateUser(

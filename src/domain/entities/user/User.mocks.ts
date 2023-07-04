@@ -7,6 +7,7 @@ export const mockUser = async (overrides: Partial<UserInput> = {}): Promise<User
     String(overrides.password || faker.internet.password()),
     overrides.name || faker.name.fullName(),
     overrides.profilePictureUrl || faker.image.imageUrl(),
+    overrides.uuid || faker.datatype.uuid(),
   )
 
 type UserInput = {
@@ -14,4 +15,5 @@ type UserInput = {
   password: string
   name?: string
   profilePictureUrl?: string
+  uuid?: string
 }
