@@ -1,12 +1,13 @@
 import { expect, it } from 'vitest'
 import { faker } from '@faker-js/faker'
+import { mockUser } from './User.mocks'
 import { User } from './User'
 
 const mockedEmail = faker.internet.email()
 
 it('creates a new authentication user', async () => {
   const mockedPassword = faker.internet.password()
-  const auth = await User.create(mockedEmail, mockedPassword)
+  const auth = await mockUser({ email: mockedEmail, password: mockedPassword })
   const isValidPassword = await auth.isValidPassword(mockedPassword)
   expect(auth.getEmail().getValue()).toBe(mockedEmail)
   expect(isValidPassword).toBeTruthy()
@@ -27,7 +28,7 @@ it('expect user to have uui, email, name and profilePictureUrl', async () => {
   const password = faker.internet.password()
   const name = faker.name.firstName()
   const profilePictureUrl = faker.image.imageUrl()
-  const user = await User.create(email, password, name, profilePictureUrl)
+  const user = await mockUser({ email, password, name, profilePictureUrl })
   expect(user.getName()).toBe(name)
   expect(user.getProfilePictureUrl()).toBe(profilePictureUrl)
 })

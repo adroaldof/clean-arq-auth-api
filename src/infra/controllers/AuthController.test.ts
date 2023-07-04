@@ -230,7 +230,7 @@ describe('POST /api/auth/sign-out', () => {
     const { body } = await request
       .post('/api/auth/sign-out')
       .set({ Authorization: `Bearer ${signInOutput.accessToken}` })
-      .send({ refreshToken: signInOutput.refreshToken }) //.expect(StatusCodes.OK)
-    console.log(`** body`, body)
+      .send({ refreshToken: signInOutput.refreshToken })
+      .expect(StatusCodes.OK)
   })
 })

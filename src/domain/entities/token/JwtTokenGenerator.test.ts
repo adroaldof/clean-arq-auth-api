@@ -1,5 +1,6 @@
 import { beforeEach, expect, it } from 'vitest'
 import { JwtTokenGenerator } from './JwtTokenGenerator'
+import { mockUser } from '../user/User.mocks'
 import { User } from '../user/User'
 
 const secretOrPrivateKey = 'key'
@@ -14,7 +15,7 @@ const authPayload = {
 let authUser: User
 
 beforeEach(async () => {
-  authUser = await User.create(authPayload.email, authPayload.password)
+  authUser = await mockUser()
 })
 
 it('generates a new token for an user', async () => {
