@@ -10,5 +10,6 @@ export const mockUserRepository = (overrides: Partial<UserRepository> = {}): Use
   getByUuid: async () => Promise.resolve(mockUser()),
   list: async () => Promise.resolve([]),
   updatePassword: async (uuid: string, password: Password) => Promise.resolve(),
+  update: async (user: User) => Promise.resolve(),
   ...overrides,
 })
