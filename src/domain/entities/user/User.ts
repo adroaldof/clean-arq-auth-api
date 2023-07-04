@@ -4,18 +4,20 @@ import { randomUUID } from 'crypto'
 
 // Entity - Aggregate
 export class User {
+  email: Email
   name?: string
   profilePictureUrl?: string
   uuid: string
 
   // Protecting email and password
   private constructor(
-    readonly email: Email,
+    email: Email,
     readonly password: Password,
     name?: string,
     profilePictureUrl?: string,
     uuid?: string,
   ) {
+    this.email = email
     this.name = name
     this.profilePictureUrl = profilePictureUrl
     this.uuid = uuid || randomUUID()
@@ -45,6 +47,12 @@ export class User {
     const emailInstance = new Email(email)
     const derivedPassword = new Password(password, salt)
     return new User(emailInstance, derivedPassword, name, profilePictureUrl, uuid)
+  }
+
+  update({ name, email, profilePictureUrl }: { email?: string; name?: string; profilePictureUrl?: string }) {
+    this.name = name
+    this.profilePictureUrl = profilePictureUrl
+    if (email) this.email = new Email(email)
   }
 
   async isValidPassword(password: string): Promise<boolean> {

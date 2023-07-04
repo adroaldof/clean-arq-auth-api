@@ -32,3 +32,14 @@ it('expect user to have uui, email, name and profilePictureUrl', async () => {
   expect(user.getName()).toBe(name)
   expect(user.getProfilePictureUrl()).toBe(profilePictureUrl)
 })
+
+it('updates the user', async () => {
+  const user = await mockUser()
+  const newName = faker.name.firstName()
+  const newEmail = faker.internet.email()
+  const newProfilePictureUrl = faker.image.imageUrl()
+  user.update({ name: newName, email: newEmail, profilePictureUrl: newProfilePictureUrl })
+  expect(user.getName()).toBe(newName)
+  expect(user.getProfilePictureUrl()).toBe(newProfilePictureUrl)
+  expect(user.getEmail().getValue()).toBe(newEmail)
+})
