@@ -1,6 +1,7 @@
 import { AuthController } from '@/infra/controllers/AuthController'
 import { AuthDecorator } from '@/decorators/AuthDecorator'
 import { config } from './config'
+import { DeleteUser } from '@/use-cases/users/DeleteUser'
 import { ExpressHttpServer } from './infra/http/ExpressHttpServer'
 import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateAuthTokenFromRefreshToken'
 import { GenerateResetPassword } from '@/use-cases/password/GenerateResetPassword'
@@ -46,6 +47,7 @@ const listUsers = new AuthDecorator(new ListUsers(usersRepository))
 const getMe = new AuthDecorator(new GetMe(usersRepository))
 const userDetail = new AuthDecorator(new UserDetail(usersRepository))
 const updateUser = new AuthDecorator(new UpdateUser(usersRepository))
-new UsersController(httpServer, listUsers, getMe, userDetail, updateUser)
+const deleteUser = new AuthDecorator(new DeleteUser(usersRepository))
+new UsersController(httpServer, listUsers, getMe, userDetail, updateUser, deleteUser)
 
 httpServer.listen(config.server.port)
