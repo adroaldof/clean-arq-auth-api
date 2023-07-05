@@ -61,7 +61,7 @@ Some features will become available as the project evolves. The following list s
 - [x] Reset Password
 - [x] Change Password
 - [x] Update User
-- [ ] Delete User (soft)
+- [x] Delete User (soft)
 - [x] Get Me
 - [x] List Users
 - [x] Detail User
