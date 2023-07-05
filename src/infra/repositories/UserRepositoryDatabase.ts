@@ -40,6 +40,10 @@ export class UserRepositoryDatabase implements UserRepository {
     delete databaseInput.salt
     await this.connection.connection(tableNames.users).update(databaseInput).where({ uuid: user.uuid })
   }
+
+  async delete(uuid: string): Promise<void> {
+    await this.connection.connection(tableNames.users).update({ status: 'deleted' }).where({ uuid })
+  }
 }
 
 const fromDatabaseOutputToAuth = async (databaseOutput: any): Promise<User> => {
