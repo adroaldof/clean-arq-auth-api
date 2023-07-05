@@ -9,7 +9,7 @@ export class UsersController {
     readonly httpServer: HttpServer,
     readonly listUsers: UseCase,
     readonly getMe: UseCase,
-    readonly userDetail: UseCase,
+    readonly detailUser: UseCase,
     readonly updateUser: UseCase,
     readonly deleteUser: UseCase,
   ) {
@@ -21,7 +21,7 @@ export class UsersController {
         const output = await this.getMe.execute({ authorization })
         return { output }
       },
-      validateSchemaMiddleware(authorizedSchema),
+      validateSchemaMiddleware(listUsersSchema),
     )
 
     this.httpServer.on(
@@ -31,10 +31,10 @@ export class UsersController {
         const { headers, params } = req
         const { authorization } = headers
         const { userUuid } = params
-        const output = await this.userDetail.execute({ authorization, userUuid })
+        const output = await this.detailUser.execute({ authorization, userUuid })
         return { output }
       },
-      validateSchemaMiddleware(userDetailSchema),
+      validateSchemaMiddleware(detailUserSchema),
     )
 
     this.httpServer.on(
@@ -47,7 +47,7 @@ export class UsersController {
         const output = await this.updateUser.execute({ authorization, userUuid, ...body })
         return { output }
       },
-      validateSchemaMiddleware(userDetailSchema),
+      validateSchemaMiddleware(detailUserSchema),
     )
 
     this.httpServer.on(
@@ -60,7 +60,7 @@ export class UsersController {
         const output = await this.deleteUser.execute({ authorization, userUuid })
         return { output }
       },
-      validateSchemaMiddleware(userDetailSchema),
+      validateSchemaMiddleware(detailUserSchema),
     )
 
     this.httpServer.on(
@@ -71,18 +71,18 @@ export class UsersController {
         const output = await this.listUsers.execute({ authorization })
         return { output }
       },
-      validateSchemaMiddleware(authorizedSchema),
+      validateSchemaMiddleware(listUsersSchema),
     )
   }
 }
 
-const authorizedSchema = z.object({
+const listUsersSchema = z.object({
   headers: z.object({
     authorization: z.string({ required_error: 'authorization header is required' }),
   }),
 })
 
-const userDetailSchema = z.object({
+const detailUserSchema = z.object({
   headers: z.object({
     authorization: z.string({ required_error: 'authorization header is required' }),
   }),

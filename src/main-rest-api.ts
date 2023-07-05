@@ -2,6 +2,7 @@ import { AuthController } from '@/infra/controllers/AuthController'
 import { AuthDecorator } from '@/decorators/AuthDecorator'
 import { config } from './config'
 import { DeleteUser } from '@/use-cases/users/DeleteUser'
+import { DetailUser } from '@/use-cases/users/DetailUser'
 import { ExpressHttpServer } from './infra/http/ExpressHttpServer'
 import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateAuthTokenFromRefreshToken'
 import { GenerateResetPassword } from '@/use-cases/password/GenerateResetPassword'
@@ -17,7 +18,6 @@ import { SignOut } from '@/use-cases/auth/SignOut'
 import { SignUp } from '@/use-cases/auth/SignUp'
 import { UpdatePassword } from '@/use-cases/password/UpdatePassword'
 import { UpdateUser } from '@/use-cases/users/UpdateUser'
-import { UserDetail } from '@/use-cases/users/UserDetail'
 import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase'
 import { UsersController } from '@/controllers/UsersController'
 import { VerifyToken } from '@/use-cases/auth/VerifyToken'
@@ -45,9 +45,9 @@ new ResetPasswordController(httpServer, generateResetPassword, updatePassword)
 
 const listUsers = new AuthDecorator(new ListUsers(usersRepository))
 const getMe = new AuthDecorator(new GetMe(usersRepository))
-const userDetail = new AuthDecorator(new UserDetail(usersRepository))
+const detailUser = new AuthDecorator(new DetailUser(usersRepository))
 const updateUser = new AuthDecorator(new UpdateUser(usersRepository))
 const deleteUser = new AuthDecorator(new DeleteUser(usersRepository))
-new UsersController(httpServer, listUsers, getMe, userDetail, updateUser, deleteUser)
+new UsersController(httpServer, listUsers, getMe, detailUser, updateUser, deleteUser)
 
 httpServer.listen(config.server.port)

@@ -3,6 +3,7 @@ import { AuthController } from './AuthController'
 import { AuthDecorator } from '@/decorators/AuthDecorator'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { DeleteUser } from '@/use-cases/users/DeleteUser'
+import { DetailUser } from '@/use-cases/users/DetailUser'
 import { ExpressHttpServer } from '@/http/ExpressHttpServer'
 import { faker } from '@faker-js/faker'
 import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateAuthTokenFromRefreshToken'
@@ -18,7 +19,6 @@ import { StatusCodes } from 'http-status-codes'
 import { tableNames } from '@/database/table-names.mjs'
 import { UpdateUser } from '@/use-cases/users/UpdateUser'
 import { User, UserOutput } from '@/entities/user/User'
-import { UserDetail } from '@/use-cases/users/UserDetail'
 import { UserRepositoryDatabase } from '@/repositories/UserRepositoryDatabase'
 import { UsersController } from './UsersController'
 import { VerifyToken } from '@/use-cases/auth/VerifyToken'
@@ -38,10 +38,10 @@ new AuthController(httpServer, signUp, signIn, signOut, verifyToken, generateAut
 
 const getMe = new AuthDecorator(new GetMe(usersRepository))
 const listUsers = new AuthDecorator(new ListUsers(usersRepository))
-const userDetail = new AuthDecorator(new UserDetail(usersRepository))
+const detailUser = new AuthDecorator(new DetailUser(usersRepository))
 const updateUser = new AuthDecorator(new UpdateUser(usersRepository))
 const deleteUser = new AuthDecorator(new DeleteUser(usersRepository))
-new UsersController(httpServer, listUsers, getMe, userDetail, updateUser, deleteUser)
+new UsersController(httpServer, listUsers, getMe, detailUser, updateUser, deleteUser)
 
 const request: SuperTest<Test> = supertest(httpServer.server)
 
