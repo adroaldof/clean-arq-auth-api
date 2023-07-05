@@ -2,6 +2,7 @@ import supertest, { SuperTest, Test } from 'supertest'
 import { AuthController } from './AuthController'
 import { AuthDecorator } from '@/decorators/AuthDecorator'
 import { beforeEach, describe, expect, it } from 'vitest'
+import { DeleteUser } from '@/use-cases/users/DeleteUser'
 import { ExpressHttpServer } from '@/http/ExpressHttpServer'
 import { faker } from '@faker-js/faker'
 import { GenerateAuthTokenFromRefreshToken } from '@/use-cases/auth/GenerateAuthTokenFromRefreshToken'
@@ -39,7 +40,8 @@ const getMe = new AuthDecorator(new GetMe(usersRepository))
 const listUsers = new AuthDecorator(new ListUsers(usersRepository))
 const userDetail = new AuthDecorator(new UserDetail(usersRepository))
 const updateUser = new AuthDecorator(new UpdateUser(usersRepository))
-new UsersController(httpServer, listUsers, getMe, userDetail, updateUser)
+const deleteUser = new AuthDecorator(new DeleteUser(usersRepository))
+new UsersController(httpServer, listUsers, getMe, userDetail, updateUser, deleteUser)
 
 const request: SuperTest<Test> = supertest(httpServer.server)
 
@@ -167,6 +169,36 @@ describe('PUT /api/users/:uuid', () => {
     await request
       .get(`/api/users/${user.uuid}`)
       .send({ name: faker.name.fullName() })
+      .set({ Authorization: `Bearer NOT_A_TOKEN` })
+      .expect(StatusCodes.UNPROCESSABLE_ENTITY)
+  })
+})
+
+describe('DELETE /api/users/:uuid', () => {
+  let user: User
+
+  beforeEach(async () => {
+    user = await mockUser()
+    await connection
+      .connection(tableNames.users)
+      .insert({ ...user.toJson(), password: faker.internet.password(), salt: faker.random.alphaNumeric(16) })
+  })
+
+  it('returns `200 OK` with an empty response', async () => {
+    const input = { email: faker.internet.email(), password: faker.internet.password() }
+    await request.post('/api/auth/sign-up').send(input).expect(StatusCodes.ACCEPTED)
+    const { body: authenticated } = await request.post('/api/auth/sign-in').send(input).expect(StatusCodes.OK)
+    await request
+      .delete(`/api/users/${user.uuid}`)
+      .set({ Authorization: `Bearer ${authenticated.accessToken}` })
+      .expect(StatusCodes.OK)
+    const deletedUser = await connection.connection(tableNames.users).where({ uuid: user.uuid }).first()
+    expect(deletedUser.status).toBe('deleted')
+  })
+
+  it('returns `422 Unprocessable Entity` with `invalid token` message when remove part of token', async () => {
+    await request
+      .delete(`/api/users/${user.uuid}`)
       .set({ Authorization: `Bearer NOT_A_TOKEN` })
       .expect(StatusCodes.UNPROCESSABLE_ENTITY)
   })

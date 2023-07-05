@@ -11,6 +11,7 @@ export class UsersController {
     readonly getMe: UseCase,
     readonly userDetail: UseCase,
     readonly updateUser: UseCase,
+    readonly deleteUser: UseCase,
   ) {
     this.httpServer.on(
       'get',
@@ -44,6 +45,19 @@ export class UsersController {
         const { authorization } = headers
         const { userUuid } = params
         const output = await this.updateUser.execute({ authorization, userUuid, ...body })
+        return { output }
+      },
+      validateSchemaMiddleware(userDetailSchema),
+    )
+
+    this.httpServer.on(
+      'delete',
+      '/api/users/:userUuid',
+      async (req: Request) => {
+        const { headers, params } = req
+        const { authorization } = headers
+        const { userUuid } = params
+        const output = await this.deleteUser.execute({ authorization, userUuid })
         return { output }
       },
       validateSchemaMiddleware(userDetailSchema),
