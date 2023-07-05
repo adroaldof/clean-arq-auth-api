@@ -11,5 +11,6 @@ export const mockUserRepository = (overrides: Partial<UserRepository> = {}): Use
   list: async () => Promise.resolve([]),
   updatePassword: async (uuid: string, password: Password) => Promise.resolve(),
   update: async (user: User) => Promise.resolve(),
+  delete: async (uuid: string) => Promise.resolve(),
   ...overrides,
 })

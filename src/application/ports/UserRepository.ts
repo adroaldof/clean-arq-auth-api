@@ -8,4 +8,5 @@ export interface UserRepository {
   updatePassword(uuid: string, password: Password): Promise<void>
   save(auth: User): Promise<void>
   update(user: User): Promise<void>
+  delete(uuid: string): Promise<void>
 }
