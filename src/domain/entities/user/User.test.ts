@@ -43,3 +43,9 @@ it('updates the user', async () => {
   expect(user.getProfilePictureUrl()).toBe(newProfilePictureUrl)
   expect(user.getEmail().getValue()).toBe(newEmail)
 })
+
+it('soft deletes the user', async () => {
+  const user = await mockUser()
+  user.delete()
+  expect(user.status).toBe('deleted')
+})

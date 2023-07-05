@@ -1,6 +1,7 @@
 import { Email } from '../auth/Email'
 import { Password } from '../auth/Password'
 import { randomUUID } from 'crypto'
+import { Status } from '@/domain/commons/statuses'
 
 // Entity - Aggregate
 export class User {
@@ -8,6 +9,7 @@ export class User {
   name?: string
   profilePictureUrl?: string
   uuid: string
+  status: Status
 
   // Protecting email and password
   private constructor(
@@ -16,11 +18,13 @@ export class User {
     name?: string,
     profilePictureUrl?: string,
     uuid?: string,
+    status?: Status,
   ) {
     this.email = email
     this.name = name
     this.profilePictureUrl = profilePictureUrl
     this.uuid = uuid || randomUUID()
+    this.status = status || 'active'
   }
 
   // Factory method
@@ -30,10 +34,11 @@ export class User {
     name?: string,
     profilePictureUrl?: string,
     uuid?: string,
+    status?: Status,
   ): Promise<User> {
     const emailInstance = new Email(email)
     const derivedPassword = await Password.create(password)
-    return new User(emailInstance, derivedPassword, name, profilePictureUrl, uuid)
+    return new User(emailInstance, derivedPassword, name, profilePictureUrl, uuid, status)
   }
 
   static async hydrateUser(
@@ -43,16 +48,21 @@ export class User {
     name?: string,
     profilePictureUrl?: string,
     uuid?: string,
+    status?: Status,
   ): Promise<User> {
     const emailInstance = new Email(email)
     const derivedPassword = new Password(password, salt)
-    return new User(emailInstance, derivedPassword, name, profilePictureUrl, uuid)
+    return new User(emailInstance, derivedPassword, name, profilePictureUrl, uuid, status)
   }
 
   update({ name, email, profilePictureUrl }: { email?: string; name?: string; profilePictureUrl?: string }) {
     this.name = name
     this.profilePictureUrl = profilePictureUrl
     if (email) this.email = new Email(email)
+  }
+
+  delete() {
+    this.status = 'deleted'
   }
 
   async isValidPassword(password: string): Promise<boolean> {
