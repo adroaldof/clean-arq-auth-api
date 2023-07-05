@@ -167,7 +167,7 @@ describe('PUT /api/users/:uuid', () => {
 
   it('returns `422 Unprocessable Entity` with `invalid token` message when remove part of token', async () => {
     await request
-      .get(`/api/users/${user.uuid}`)
+      .put(`/api/users/${user.uuid}`)
       .send({ name: faker.name.fullName() })
       .set({ Authorization: `Bearer NOT_A_TOKEN` })
       .expect(StatusCodes.UNPROCESSABLE_ENTITY)
