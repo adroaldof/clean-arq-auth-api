@@ -10,7 +10,7 @@ export class GenerateResetPassword {
   async execute(input: ResetPasswordInput): Promise<ResetPasswordOutput> {
     const user = await this.usersRepository.getByEmail(input.email)
     if (!user) return { message: secureResetPasswordMessage }
-    const passwordReset = new ResetPassword(undefined, user.uuid)
+    const passwordReset = new ResetPassword({ userUuid: user.uuid })
     const uuid = await this.resetPasswordRepository.save(passwordReset)
     return { message: secureResetPasswordMessage, token: uuid }
   }

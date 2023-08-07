@@ -2,7 +2,7 @@
 export class Email {
   private value: string
 
-  constructor(email: string) {
+  constructor({ email }: { email: string }) {
     if (!this.isValid(email)) throw new Error('invalid email')
     this.value = email
   }

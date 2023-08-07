@@ -9,7 +9,7 @@ const DIGEST = 'sha512'
 export class Password {
   constructor(readonly value: string, readonly salt: string) {}
 
-  static create(password: string, salt?: string): Promise<Password> {
+  static create({ password, salt }: { password: string; salt?: string }): Promise<Password> {
     const generatedSalt = salt || randomBytes(SALT_LENGTH).toString('hex')
     return new Promise((resolve, reject) => {
       pbkdf2(password, generatedSalt, ITERATIONS, KEY_LENGTH, DIGEST, (error, derivedKey) => {
@@ -19,7 +19,7 @@ export class Password {
     })
   }
 
-  validate(password: string): Promise<boolean> {
+  validate({ password }: { password: string }): Promise<boolean> {
     return new Promise((resolve, reject) => {
       pbkdf2(password, this.salt, ITERATIONS, KEY_LENGTH, DIGEST, (error, derivedKey) => {
         if (error) return reject(error)

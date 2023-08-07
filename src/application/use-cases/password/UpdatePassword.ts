@@ -10,7 +10,7 @@ export class UpdatePassword {
     const resetPassword = await this.resetPasswordRepository.getByUuid(input.token)
     if (!resetPassword) throw new Error('invalid reset password token')
     await this.resetPasswordRepository.invalidateByUserUuid(resetPassword.userUuid)
-    const password = await Password.create(input.password)
+    const password = await Password.create({ password: input.password })
     await this.usersRepository.updatePassword(resetPassword.userUuid, password)
   }
 }

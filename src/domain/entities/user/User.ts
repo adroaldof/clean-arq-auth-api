@@ -3,6 +3,15 @@ import { Password } from '../auth/Password'
 import { randomUUID } from 'crypto'
 import { Status } from '@/domain/commons/statuses'
 
+export interface UserInput {
+  email: Email
+  readonly password: Password
+  name?: string
+  profilePictureUrl?: string
+  uuid?: string
+  status?: Status
+}
+
 // Entity - Aggregate
 export class User {
   email: Email
@@ -36,8 +45,8 @@ export class User {
     uuid?: string,
     status?: Status,
   ): Promise<User> {
-    const emailInstance = new Email(email)
-    const derivedPassword = await Password.create(password)
+    const emailInstance = new Email({ email })
+    const derivedPassword = await Password.create({ password })
     return new User(emailInstance, derivedPassword, name, profilePictureUrl, uuid, status)
   }
 
@@ -50,7 +59,7 @@ export class User {
     uuid?: string,
     status?: Status,
   ): Promise<User> {
-    const emailInstance = new Email(email)
+    const emailInstance = new Email({ email })
     const derivedPassword = new Password(password, salt)
     return new User(emailInstance, derivedPassword, name, profilePictureUrl, uuid, status)
   }
@@ -58,7 +67,7 @@ export class User {
   update({ name, email, profilePictureUrl }: { email?: string; name?: string; profilePictureUrl?: string }) {
     this.name = name
     this.profilePictureUrl = profilePictureUrl
-    if (email) this.email = new Email(email)
+    if (email) this.email = new Email({ email })
   }
 
   delete() {
@@ -66,7 +75,7 @@ export class User {
   }
 
   async isValidPassword(password: string): Promise<boolean> {
-    return this.password.validate(password)
+    return this.password.validate({ password })
   }
 
   toJson() {

@@ -7,11 +7,6 @@ const secretOrPrivateKey = 'key'
 const expiresIn = 60 * 60 * 24 * 365 * 10 * 1000 // 10 years for test purpose only (seconds * minutes * hours * days * years * multiplier)
 const issueDate = new Date('2023-04-09T10:00:00')
 
-const authPayload = {
-  email: 'john.doe@email.com',
-  password: 'abc123',
-}
-
 let authUser: User
 
 beforeEach(async () => {
