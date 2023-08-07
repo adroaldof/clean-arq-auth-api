@@ -7,14 +7,20 @@ const DIGEST = 'sha512'
 
 // Value Object - Password
 export class Password {
-  constructor(readonly value: string, readonly salt: string) {}
+  private password: string
+  private salt: string
+
+  constructor({ password, salt }: { password: string; salt?: string }) {
+    this.password = password
+    this.salt = salt || randomBytes(SALT_LENGTH).toString('hex')
+  }
 
   static create({ password, salt }: { password: string; salt?: string }): Promise<Password> {
     const generatedSalt = salt || randomBytes(SALT_LENGTH).toString('hex')
     return new Promise((resolve, reject) => {
       pbkdf2(password, generatedSalt, ITERATIONS, KEY_LENGTH, DIGEST, (error, derivedKey) => {
         if (error) return reject(error)
-        return resolve(new Password(derivedKey.toString('hex'), generatedSalt))
+        return resolve(new Password({ password: derivedKey.toString('hex'), salt: generatedSalt }))
       })
     })
   }
@@ -23,13 +29,13 @@ export class Password {
     return new Promise((resolve, reject) => {
       pbkdf2(password, this.salt, ITERATIONS, KEY_LENGTH, DIGEST, (error, derivedKey) => {
         if (error) return reject(error)
-        return resolve(derivedKey.toString('hex') === this.value)
+        return resolve(derivedKey.toString('hex') === this.password)
       })
     })
   }
 
   getValue() {
-    return this.value
+    return this.password
   }
 
   getSalt() {

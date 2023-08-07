@@ -15,21 +15,16 @@ export interface UserInput {
 // Entity - Aggregate
 export class User {
   email: Email
+  password: Password
   name?: string
   profilePictureUrl?: string
   uuid: string
   status: Status
 
   // Protecting email and password
-  private constructor(
-    email: Email,
-    readonly password: Password,
-    name?: string,
-    profilePictureUrl?: string,
-    uuid?: string,
-    status?: Status,
-  ) {
+  private constructor({ email, password, name, profilePictureUrl, uuid, status }: UserInput) {
     this.email = email
+    this.password = password
     this.name = name
     this.profilePictureUrl = profilePictureUrl
     this.uuid = uuid || randomUUID()
@@ -37,31 +32,46 @@ export class User {
   }
 
   // Factory method
-  static async create(
-    email: string,
-    password: string,
-    name?: string,
-    profilePictureUrl?: string,
-    uuid?: string,
-    status?: Status,
-  ): Promise<User> {
+  static async create({
+    email,
+    password,
+    name,
+    profilePictureUrl,
+    uuid,
+    status,
+  }: {
+    email: string
+    password: string
+    name?: string
+    profilePictureUrl?: string
+    uuid?: string
+    status?: Status
+  }): Promise<User> {
     const emailInstance = new Email({ email })
     const derivedPassword = await Password.create({ password })
-    return new User(emailInstance, derivedPassword, name, profilePictureUrl, uuid, status)
+    return new User({ email: emailInstance, password: derivedPassword, name, profilePictureUrl, uuid, status })
   }
 
-  static async hydrateUser(
-    email: string,
-    password: string,
-    salt: string,
-    name?: string,
-    profilePictureUrl?: string,
-    uuid?: string,
-    status?: Status,
-  ): Promise<User> {
+  static async hydrateUser({
+    email,
+    password,
+    salt,
+    name,
+    profilePictureUrl,
+    uuid,
+    status,
+  }: {
+    email: string
+    password: string
+    salt: string
+    name?: string
+    profilePictureUrl?: string
+    uuid?: string
+    status?: Status
+  }): Promise<User> {
     const emailInstance = new Email({ email })
-    const derivedPassword = new Password(password, salt)
-    return new User(emailInstance, derivedPassword, name, profilePictureUrl, uuid, status)
+    const derivedPassword = new Password({ password, salt })
+    return new User({ email: emailInstance, password: derivedPassword, name, profilePictureUrl, uuid, status })
   }
 
   update({ name, email, profilePictureUrl }: { email?: string; name?: string; profilePictureUrl?: string }) {

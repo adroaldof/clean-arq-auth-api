@@ -19,7 +19,7 @@ it('creates a new password object with a salt', async () => {
 })
 
 it('validates a clear password from a derived password and salt', async function () {
-  const password = new Password(derivedPassword, salt)
+  const password = new Password({ password: derivedPassword, salt })
   const isValid = await password.validate({ password: clearPassword })
   expect(isValid).toBeTruthy()
 })
