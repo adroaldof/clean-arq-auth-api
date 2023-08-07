@@ -7,7 +7,7 @@ export class GenerateAuthTokenFromRefreshToken {
   constructor(readonly refreshTokenRepository: RefreshTokenRepository, readonly usersRepository: UserRepository) {}
 
   async execute(input: GenerateAuthTokenFromRefreshTokenInput) {
-    const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
+    const tokenGenerator = new JwtTokenGenerator({ secretOrPrivateKey: config.token.signKey })
     const token = tokenGenerator.verify(input.refreshToken)
     const refreshToken = await this.refreshTokenRepository.getByUuid(token.refreshTokenUuid)
     if (!refreshToken) throw new Error('invalid refresh token')

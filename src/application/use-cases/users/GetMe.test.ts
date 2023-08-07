@@ -32,7 +32,7 @@ it('returns the user information only when authenticated', async () => {
   const getMe = new GetMe(usersRepository)
   const authenticatedGetMe = new AuthDecorator(getMe)
   const mockedUser = await mockUser()
-  const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
+  const tokenGenerator = new JwtTokenGenerator({ secretOrPrivateKey: config.token.signKey })
   const accessToken = tokenGenerator.generateAuthToken(mockedUser)
   const user = await authenticatedGetMe.execute({ authorization: `Bearer ${accessToken}` })
   expect(user).toEqual(

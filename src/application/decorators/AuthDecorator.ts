@@ -13,7 +13,7 @@ export class AuthDecorator implements UseCase {
     try {
       const { authorization, ...rest } = input
       const [_authorizationPrefix, accessToken] = authorization.split(' ')
-      const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
+      const tokenGenerator = new JwtTokenGenerator({ secretOrPrivateKey: config.token.signKey })
       const decodedToken = tokenGenerator.verify(accessToken)
       const authenticatedInput = { ...rest, authenticatedUserUuid: decodedToken.uuid }
       return this.useCase.execute(authenticatedInput)

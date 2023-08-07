@@ -14,13 +14,13 @@ beforeEach(async () => {
 })
 
 it('generates a new token for an user', async () => {
-  const tokenGenerator = new JwtTokenGenerator(secretOrPrivateKey)
+  const tokenGenerator = new JwtTokenGenerator({ secretOrPrivateKey })
   const output = tokenGenerator.generateAuthToken(authUser, issueDate, expiresIn)
   expect(output).toEqual(expect.any(String))
 })
 
 it('verifies the user token content', async () => {
-  const tokenGenerator = new JwtTokenGenerator(secretOrPrivateKey)
+  const tokenGenerator = new JwtTokenGenerator({ secretOrPrivateKey })
   const derivedToken = tokenGenerator.generateAuthToken(authUser, issueDate, expiresIn)
   const output = tokenGenerator.verify(derivedToken)
   expect(output).toEqual(
@@ -33,14 +33,14 @@ it('verifies the user token content', async () => {
 })
 
 it('returns `invalid token` exception when try to validate a malformed token', async () => {
-  const tokenGenerator = new JwtTokenGenerator(secretOrPrivateKey)
+  const tokenGenerator = new JwtTokenGenerator({ secretOrPrivateKey })
   const derivedToken = tokenGenerator.generateAuthToken(authUser, issueDate, expiresIn)
   const invalidToken = derivedToken.substring(5) // remove 5 characters from the beginning
   expect(() => tokenGenerator.verify(invalidToken)).toThrow('invalid token')
 })
 
 it('returns a validation output with uuid, refresh token and expires at date', async () => {
-  const tokenGenerator = new JwtTokenGenerator(secretOrPrivateKey)
+  const tokenGenerator = new JwtTokenGenerator({ secretOrPrivateKey })
   const output = tokenGenerator.generateRefreshToken()
   expect(output).toEqual(
     expect.objectContaining({

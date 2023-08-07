@@ -18,7 +18,11 @@ const options: SignOptions = { algorithm: ALGORITHM }
 
 // Domain service
 export class JwtTokenGenerator {
-  constructor(readonly secretOrPrivateKey: string) {}
+  private secretOrPrivateKey: string
+
+  constructor({ secretOrPrivateKey }: { secretOrPrivateKey: string }) {
+    this.secretOrPrivateKey = secretOrPrivateKey
+  }
 
   generateAuthToken(user: User, issueDate: Date = new Date(), expiresIn: number = EXPIRES_IN): string {
     const iat = issueDate.getTime()

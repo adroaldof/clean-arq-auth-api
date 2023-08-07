@@ -23,7 +23,7 @@ it('returns a new authentication token from a refresh token', async () => {
     refreshTokenRepository,
     usersRepository,
   )
-  const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
+  const tokenGenerator = new JwtTokenGenerator({ secretOrPrivateKey: config.token.signKey })
   const { refreshToken } = tokenGenerator.generateRefreshToken()
   const output = await generateAuthTokenFromRefreshToken.execute({ refreshToken })
   expect(getAuthSpy).toHaveBeenCalledOnce()
@@ -42,7 +42,7 @@ it('returns `invalid refresh token error` when the refresh token is not found', 
     refreshTokenRepository,
     usersRepository,
   )
-  const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
+  const tokenGenerator = new JwtTokenGenerator({ secretOrPrivateKey: config.token.signKey })
   const { refreshToken } = tokenGenerator.generateRefreshToken()
   expect(() => generateAuthTokenFromRefreshToken.execute({ refreshToken })).rejects.toThrow(
     new Error('invalid refresh token'),
@@ -61,7 +61,7 @@ it('returns `invalid refresh token error` when refresh token user is not found',
     refreshTokenRepository,
     usersRepository,
   )
-  const tokenGenerator = new JwtTokenGenerator(config.token.signKey)
+  const tokenGenerator = new JwtTokenGenerator({ secretOrPrivateKey: config.token.signKey })
   const { refreshToken } = tokenGenerator.generateRefreshToken()
   expect(() => generateAuthTokenFromRefreshToken.execute({ refreshToken })).rejects.toThrow(
     new Error('invalid refresh token'),
