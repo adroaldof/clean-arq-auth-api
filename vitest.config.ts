@@ -9,8 +9,10 @@ export default defineConfig({
   test: {
     unstubEnvs: true,
     globals: true,
-    deps: {
-      fallbackCJS: true,
+    server: {
+      deps: {
+        fallbackCJS: true,
+      },
     },
     coverage: {
       reporter: ['text', 'text-summary', 'html'],
