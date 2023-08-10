@@ -10,17 +10,17 @@ export class UserRepositoryDatabase implements UserRepository {
   async list(): Promise<User[]> {
     const databaseOutput = await this.connection.connection(tableNames.users)
     if (!databaseOutput.length) return []
-    return Promise.all(databaseOutput.map(fromDatabaseOutputToAuth))
+    return Promise.all(databaseOutput.map(fromDatabaseOutputToUser))
   }
 
   async getByEmail(email: string): Promise<User | null> {
     const databaseOutput = await this.connection.connection(tableNames.users).where({ email }).first()
-    return databaseOutput ? fromDatabaseOutputToAuth(databaseOutput) : null
+    return databaseOutput ? fromDatabaseOutputToUser(databaseOutput) : null
   }
 
   async getByUuid(uuid: string): Promise<User | null> {
     const databaseOutput = await this.connection.connection(tableNames.users).where({ uuid }).first()
-    return databaseOutput ? fromDatabaseOutputToAuth(databaseOutput) : null
+    return databaseOutput ? fromDatabaseOutputToUser(databaseOutput) : null
   }
 
   async updatePassword(uuid: string, password: Password): Promise<void> {
@@ -31,14 +31,12 @@ export class UserRepositoryDatabase implements UserRepository {
   }
 
   async save(auth: User): Promise<void> {
-    await this.connection.connection(tableNames.users).insert(fromAuthToDatabaseInput(auth))
+    await this.connection.connection(tableNames.users).insert(fromUserToDatabaseInput(auth))
   }
 
   async update(user: User): Promise<void> {
-    const databaseInput = fromAuthToDatabaseInput(user)
-    delete databaseInput.password
-    delete databaseInput.salt
-    await this.connection.connection(tableNames.users).update(databaseInput).where({ uuid: user.uuid })
+    const { password, salt, ...userDatabaseInput } = fromUserToDatabaseInput(user)
+    await this.connection.connection(tableNames.users).update(userDatabaseInput).where({ uuid: user.uuid })
   }
 
   async delete(uuid: string): Promise<void> {
@@ -46,18 +44,35 @@ export class UserRepositoryDatabase implements UserRepository {
   }
 }
 
-const fromDatabaseOutputToAuth = async (databaseOutput: any): Promise<User> => {
-  return User.hydrateUser(
-    databaseOutput.email,
-    databaseOutput.password,
-    databaseOutput.salt,
-    databaseOutput.name,
-    databaseOutput.profilePictureUrl,
-    databaseOutput.uuid,
-  )
+interface UserDatabaseInput {
+  email: string
+  password: string
+  salt: string
+  name?: string
+  profilePictureUrl?: string
 }
 
-const fromAuthToDatabaseInput = (auth: User): any => {
+interface UserDatabaseOutput {
+  email: string
+  password: string
+  salt: string
+  name: string
+  profilePictureUrl: string
+  uuid: string
+}
+
+const fromDatabaseOutputToUser = async ({
+  email,
+  password,
+  salt,
+  name,
+  profilePictureUrl,
+  uuid,
+}: UserDatabaseOutput): Promise<User> => {
+  return User.hydrateUser({ email, password, salt, name, profilePictureUrl, uuid })
+}
+
+const fromUserToDatabaseInput = (auth: User): UserDatabaseInput => {
   return {
     email: auth.getEmail().getValue(),
     password: auth.getPassword().getValue(),

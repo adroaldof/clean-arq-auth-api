@@ -7,14 +7,14 @@ export class ResetPasswordRepositoryDatabase implements ResetPasswordPort {
   constructor(readonly connection: Connection) {}
 
   async save(input: ResetPassword): Promise<string> {
-    const databaseInput = fromResetPasswordToDatabase(input)
+    const databaseInput = fromResetPasswordToDatabaseInput(input)
     const [output] = await this.connection.connection(tableNames.resetPassword).insert(databaseInput).returning('uuid')
     return output.uuid
   }
 
   async getByUuid(uuid: string): Promise<ResetPassword | null> {
     const [databaseOutput] = await this.connection.connection(tableNames.resetPassword).where({ uuid })
-    return Boolean(databaseOutput) ? databaseOutput : null
+    return Boolean(databaseOutput) ? fromDatabaseOutputToResetPassword(databaseOutput) : null
   }
 
   async invalidateByUserUuid(userUuid: string): Promise<void> {
@@ -22,4 +22,25 @@ export class ResetPasswordRepositoryDatabase implements ResetPasswordPort {
   }
 }
 
-const fromResetPasswordToDatabase = (input: ResetPassword) => input.toJson()
+interface ResetPasswordDatabaseInput {
+  uuid: string
+  userUuid: string
+  expiresAt: Date
+  status: string
+}
+
+interface ResetPasswordDatabaseOutput {
+  uuid: string
+  userUuid: string
+  expiresAt: Date
+  status: string
+}
+
+const fromResetPasswordToDatabaseInput = (input: ResetPassword): ResetPasswordDatabaseInput => input.toJson()
+
+const fromDatabaseOutputToResetPassword = ({
+  uuid,
+  userUuid,
+  expiresAt,
+  status,
+}: ResetPasswordDatabaseOutput): ResetPassword => new ResetPassword({ uuid, userUuid, expiresAt, status })

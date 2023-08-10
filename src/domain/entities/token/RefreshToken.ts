@@ -1,3 +1,11 @@
 export class RefreshToken {
-  constructor(readonly uuid: string, readonly userUuid: string, readonly expiresAt: Date) {}
+  uuid: string
+  userUuid: string
+  expiresAt: Date
+
+  constructor({ uuid, userUuid, expiresAt }: { uuid: string; userUuid: string; expiresAt: Date }) {
+    this.uuid = uuid
+    this.userUuid = userUuid
+    this.expiresAt = expiresAt
+  }
 }
